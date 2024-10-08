@@ -1,6 +1,8 @@
-// pages/api/auth/signin.ts
+
 import { NextApiRequest, NextApiResponse } from "next";
-import API_URL from "../../../lib/config"; // Import the API_URL
+import API_URL from "../../../lib/config"; 
+
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
@@ -8,13 +10,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       // Forward the request to the external server using the API_URL from config
-      const response = await fetch(`${API_URL}`, {
+      const response = await fetch(`${API_URL}login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          'username': email, 'password': password
+        }),
       });
+
+      console.log(response)
 
       if (response.ok) {
         const data = await response.json();

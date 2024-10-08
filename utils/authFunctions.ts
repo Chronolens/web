@@ -36,7 +36,7 @@ export const postSignIn = async () => {
     const email = emailInput.value;
     const password = passwordInput.value;
   
-    const response = await fetch("/api/auth/signin", {
+    const response = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
