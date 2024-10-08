@@ -1,7 +1,7 @@
 "use client"; // Ensure this is a Client Component
 
 import { useRouter } from "next/navigation"; // useRouter hook for navigation
-import { postSignIn, getSignUp } from "@/utils/authFunctions"; // Import the functions
+import { postSignUp, getSignIn } from "@/utils/authFunctions"; // Import the functions
 
 export default function Home() {
   const router = useRouter(); // Initialize the router
@@ -69,18 +69,18 @@ export default function Home() {
           <div className="flex gap-4">
             <button
               type="button"
-              onClick={() => getSignUp(router)} // Use the imported handleSignUp function
+              onClick={() => getSignIn(router)} // Use the imported handleSignUp function
               className="flex w-full justify-center rounded-md bg-indigo-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300"
             >
-              Sign up
+              Sign in
             </button>
 
             <button
-              onClick={postSignIn} // Use the imported handleSignIn function
+              onClick={postSignUp} // Use the imported handleSignIn function
               type="button"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Sign in
+              Sign up
             </button>
           </div>
 
