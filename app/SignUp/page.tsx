@@ -1,9 +1,9 @@
 "use client"; // Ensure this is a Client Component
 
 import { useRouter } from "next/navigation"; // useRouter hook for navigation
-import { postSignUp, getSignIn } from "@/utils/authFunctions"; // Import the functions
+import { getSignIn, postSignUp } from "@/utils/authFunctions"; // Import the functions
 
-export default function Gallery() {
+export default function SignUpPage() {
   const router = useRouter(); // Initialize the router
 
   return (
@@ -15,7 +15,7 @@ export default function Gallery() {
           alt="Your Company"
         />
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign in to your account
+          Sign up your account
         </h2>
       </div>
 

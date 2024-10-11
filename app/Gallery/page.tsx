@@ -1,32 +1,34 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+"use client";
 
-export default function Home() {
-  const [user, setUser] = useState(null);
-  const router = useRouter();
+import { useState } from 'react';
+import Sidebar from './Sidebar';
+import Header from './Header';
+import PageContent from './PageContent';
 
-  useEffect(() => {
-    // Fetch user info (authentication check)
-    async function fetchUser() {
-      const response = await fetch("/api/auth/user");
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
-      } else {
-        router.push("/SignIn");
-      }
-    }
-    fetchUser();
-  }, [router]);
+export default function GalleryPage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  if (!user) {
-    return <p>Loading...</p>;
-  }
+  const handleSidebarToggle = (isOpen) => {
+    setIsSidebarOpen(isOpen);
+  };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Welcome, {user.email}!</h1>
-      <p>You are successfully logged in.</p>
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
+      <Sidebar isSidebarOpen={isSidebarOpen} onSidebarToggle={handleSidebarToggle} />
+
+      {/* Main Content Area */}
+      <div
+        className={`flex-1 transition-all duration-300 ease-in-out ${
+          isSidebarOpen ? 'ml-36' : 'ml-12'
+        }`}
+      >
+        {/* Header */}
+        <Header isSidebarOpen={isSidebarOpen} />
+
+        {/* Page Content */}
+        <PageContent isSidebarOpen={isSidebarOpen} />
+      </div>
     </div>
   );
 }
