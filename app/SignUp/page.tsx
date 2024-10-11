@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"; // useRouter hook for navigation
 import { postSignUp, getSignIn } from "@/utils/authFunctions"; // Import the functions
 
-export default function Home() {
+export default function Gallery() {
   const router = useRouter(); // Initialize the router
 
   return (
@@ -23,17 +23,17 @@ export default function Home() {
         <form className="space-y-6">
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm font-medium leading-6 text-gray-900"
             >
-              Email address
+              Username
             </label>
             <div className="mt-2">
               <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
+                id="username"
+                name="username"
+                type="username"
+                autoComplete="username"
                 required
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />

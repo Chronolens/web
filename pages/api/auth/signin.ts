@@ -1,12 +1,11 @@
-
 import { NextApiRequest, NextApiResponse } from "next";
-import API_URL from "../../../lib/config"; 
-
-
+import { SignInRequest } from "../../../types/AuthModels";
+import API_URL from "../../../lib/config";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { email, password } = req.body;
+    // Destructure the request body using the updated SignInRequest model
+    const { username, password }: SignInRequest = req.body;
 
     try {
       // Forward the request to the external server using the API_URL from config
@@ -16,11 +15,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          'username': email, 'password': password
+          username,
+          password,
         }),
       });
 
-      console.log(response)
+      console.log(response);
 
       if (response.ok) {
         const data = await response.json();
