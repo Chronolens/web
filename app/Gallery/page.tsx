@@ -13,7 +13,7 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hisdden">
       {/* Sidebar */}
       <Sidebar isSidebarOpen={isSidebarOpen} onSidebarToggle={handleSidebarToggle} />
 
