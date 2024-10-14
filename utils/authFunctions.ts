@@ -14,7 +14,6 @@ export const postSignIn = async () => {
   const username = usernameInput.value;
   const password = passwordInput.value;
 
-  // Create the typed request object using SignInRequest model
   const signInData: SignInRequest = { username, password };
 
   const response = await fetch("/api/auth/signin", {
@@ -24,11 +23,17 @@ export const postSignIn = async () => {
   });
 
   if (response.ok) {
-    window.location.href = "/Gallery"; // Redirect to Gallery on successful login
+    const data = await response.json();
+
+    const token = data.token;
+    document.cookie = `authToken=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
+
+    window.location.href = "/Gallery";
   } else {
     alert("Invalid credentials");
   }
 };
+
 
 export const postSignUp = async () => {
   const usernameInput = document.getElementById('username') as HTMLInputElement | null;
@@ -64,4 +69,22 @@ export const getSignUp = (router: any) => {
 
 export const getSignIn = (router: any) => {
   router.push("/"); // Navigate to the SignIn page
+};
+
+export const getLogout = () => {
+  // Delete the authToken cookie by setting its expiration date to a past date
+  //document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+  // To remove all cookies, loop over them
+  const cookies = document.cookie.split(";");
+
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  }
+
+  // Redirect to sign-in page
+  window.location.href = "/";
 };

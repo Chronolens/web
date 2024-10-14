@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { SignInRequest } from "../../../types/AuthModels";
 import API_URL from "../../../lib/config";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function signInHandler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     // Destructure the request body using the updated SignInRequest model
     const { username, password }: SignInRequest = req.body;
