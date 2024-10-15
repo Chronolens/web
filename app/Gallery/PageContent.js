@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchFullSyncData } from '../../pages/api/previewRequests'; // Import only fetchFullSyncData
+import { fetchFullSyncData } from '../../pages/api/genRequests'; // Import only fetchFullSyncData
 
 const PageContent = ({ isSidebarOpen }) => {
   const [contentData, setContentData] = useState(null); // State to store fetched data

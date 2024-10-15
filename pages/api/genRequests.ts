@@ -1,14 +1,33 @@
-// pages/api/previewRequests.ts
-
 import API_URL from "../../lib/config";
 
-// Function to fetch the full sync data and extract the photo hashes
 export const fetchFullSyncData = async () => {
   try {
-    // First request to /sync/full
+    // Get the auth token from the cookies
+    const getAuthTokenFromCookies = () => {
+      const name = "authToken=";
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const cookies = decodedCookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i].trim();
+        if (cookie.indexOf(name) === 0) {
+          return cookie.substring(name.length, cookie.length);
+        }
+      }
+      return null;
+    };
+
+    const authToken = getAuthTokenFromCookies();
+
+    if (!authToken) {
+      throw new Error('No auth token found. Please log in.');
+    }
+
     const fullSyncResponse = await fetch(`${API_URL}sync/full`, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, // Send the auth token
+      },
     });
 
     if (!fullSyncResponse.ok) {
@@ -17,7 +36,6 @@ export const fetchFullSyncData = async () => {
 
     const syncData = await fullSyncResponse.json(); // Get the JSON response
 
-    // Extract keys (photo hashes) from the syncData
     const photoHashes = Object.keys(syncData);
 
     // Print syncData and photoHashes to the terminal
@@ -30,6 +48,7 @@ export const fetchFullSyncData = async () => {
     throw err;
   }
 };
+
 
 // Function to fetch previews for each photo hash
 export const fetchPreviewsByHash = async (photoHashes: string[]) => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faUpload, faTimes } from '@fortawesome/free-solid-svg-icons';
 
-import { postSearchQuery } from '../../utils/search';
+//import { postSearchQuery } from '../../utils/search';
 
 const handleSearchSubmit = async (e) => {
   if (e.key === 'Enter') {

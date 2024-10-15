@@ -1,4 +1,3 @@
-// utils/search.ts
 
 export const postSearchQuery = async (query: string) => {
     if (!query) {
