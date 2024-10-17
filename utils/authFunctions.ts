@@ -1,18 +1,15 @@
 // utils/authFunctions.ts
-
+import { cookies } from "next/headers";
 import { SignInRequest, SignUpRequest } from "../types/AuthModels"; // Import models
 
-export const postSignIn = async () => {
-  const usernameInput = document.getElementById('username') as HTMLInputElement | null;
-  const passwordInput = document.getElementById('password') as HTMLInputElement | null;
-
-  if (!usernameInput || !passwordInput) {
+export async function postSignIn(
+  username: string,
+  password: string,
+): Promise<boolean> {
+  if (!username || !password) {
     alert("Username or password input not found");
-    return;
+    return false;
   }
-
-  const username = usernameInput.value;
-  const password = passwordInput.value;
 
   const signInData: SignInRequest = { username, password };
 
@@ -26,20 +23,22 @@ export const postSignIn = async () => {
     const data = await response.json();
 
     const token = data.token;
-    
-    // Remove HttpOnly from client-side cookie setting
-    document.cookie = `authToken=${token}; path=/; secure; SameSite=Strict`;
 
-    window.location.href = "/gallery";
+    cookies().set("authToken", token, { secure: true, path: "/" });
+
+    return true;
   } else {
-    alert("Invalid credentials");
+    return false;
   }
-};
-
+}
 
 export const postSignUp = async () => {
-  const usernameInput = document.getElementById('username') as HTMLInputElement | null;
-  const passwordInput = document.getElementById('password') as HTMLInputElement | null;
+  const usernameInput = document.getElementById(
+    "username",
+  ) as HTMLInputElement | null;
+  const passwordInput = document.getElementById(
+    "password",
+  ) as HTMLInputElement | null;
 
   if (!usernameInput || !passwordInput) {
     alert("Username or password input not found");
@@ -84,7 +83,8 @@ export const getLogout = () => {
     const cookie = cookies[i];
     const eqPos = cookie.indexOf("=");
     const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   }
 
   // Redirect to sign-in page
