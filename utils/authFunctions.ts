@@ -16,7 +16,7 @@ export const postSignIn = async () => {
 
   const signInData: SignInRequest = { username, password };
 
-  const response = await fetch("/api/auth/signin", {
+  const response = await fetch("/api/auth/auth", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(signInData), // Send typed data
@@ -26,7 +26,9 @@ export const postSignIn = async () => {
     const data = await response.json();
 
     const token = data.token;
-    document.cookie = `authToken=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
+    
+    // Remove HttpOnly from client-side cookie setting
+    document.cookie = `authToken=${token}; path=/; secure; SameSite=Strict`;
 
     window.location.href = "/gallery";
   } else {
