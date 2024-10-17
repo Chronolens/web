@@ -87,7 +87,7 @@ export default function Home() {
           {/* DEBUG BUTTON -> GALLERY*/}
           <button
             type="button"
-            onClick={() => router.push('/Gallery')} // Redirect to /Gallery
+            onClick={() => router.push('/gallery')} // Redirect to /Gallery
             className="mt-4 flex w-full justify-center rounded-md bg-green-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
           >
             Go to Gallery

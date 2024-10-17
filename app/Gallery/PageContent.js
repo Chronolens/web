@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchFullSyncData } from '../../pages/api/genRequests'; // Import only fetchFullSyncData
 
-const PageContent = ({ isSidebarOpen }) => {
+const PageContent = () => {
   const [contentData, setContentData] = useState(null); // State to store fetched data
   const [loading, setLoading] = useState(true); // State to manage loading state
   const [error, setError] = useState(null); // State to manage errors
@@ -28,11 +28,7 @@ const PageContent = ({ isSidebarOpen }) => {
 
   // Render loading state, error state, or the content
   return (
-    <main
-      className={`flex-1 p-8 transition-all duration-300 ease-in-out ${
-        isSidebarOpen ? 'pl-36' : 'pl-12'
-      }`}
-    >
+    <main className="flex-1 p-8">
       <h2 className="text-2xl font-semibold">Main Content Area</h2>
       
       {/* Show a loading message */}

@@ -28,7 +28,7 @@ export const postSignIn = async () => {
     const token = data.token;
     document.cookie = `authToken=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
 
-    window.location.href = "/Gallery";
+    window.location.href = "/gallery";
   } else {
     alert("Invalid credentials");
   }
@@ -57,14 +57,14 @@ export const postSignUp = async () => {
   });
 
   if (response.ok) {
-    window.location.href = "/Gallery"; // Redirect to Gallery on successful sign-up
+    window.location.href = "/";
   } else {
-    alert("Invalid credentials");
+    window.location.href = "/";
   }
 };
 
 export const getSignUp = (router: any) => {
-  router.push("/SignUp"); // Navigate to the SignUp page
+  router.push("/sign_up"); // Navigate to the SignUp page
 };
 
 export const getSignIn = (router: any) => {
