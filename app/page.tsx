@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"; // useRouter hook for navigation
 import { postSignIn, getSignUp } from "@/utils/authFunctions"; // Import the functions
+import { useState } from "react";
 
 export default function Home() {
   return (
