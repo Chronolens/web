@@ -1,78 +1,45 @@
+// ../../pages/api/genRequests.js
 import API_URL from "../../lib/config";
 
-export const fetchFullSyncData = async () => {
-  try {
-    // Get the auth token from the cookies
-    const getAuthTokenFromCookies = () => {
-      const name = "authToken=";
-      const decodedCookie = decodeURIComponent(document.cookie);
-      const cookies = decodedCookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i].trim();
-        if (cookie.indexOf(name) === 0) {
-          return cookie.substring(name.length, cookie.length);
-        }
-      }
-      return null;
-    };
-
-    const authToken = getAuthTokenFromCookies();
-
-    if (!authToken) {
-      throw new Error('No auth token found. Please log in.');
-    }
-
-    const fullSyncResponse = await fetch(`${API_URL}sync/full`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`, // Send the auth token
-      },
-    });
-
-    if (!fullSyncResponse.ok) {
-      throw new Error('Failed to fetch /sync/full');
-    }
-
-    const syncData = await fullSyncResponse.json(); // Get the JSON response
-
-    const photoHashes = Object.keys(syncData);
-
-    // Print syncData and photoHashes to the terminal
-    console.log('Full sync data:', syncData);
-    console.log('Extracted photo hashes:', photoHashes);
-
-    return photoHashes; // Return the array of photo hashes
-  } catch (err) {
-    console.error('Error fetching sync data:', err);
-    throw err;
-  }
+const getCookie = (name: string): string | null => {
+  const cookieMatch = document.cookie.match(new RegExp(`(^|; )${name}=([^;]*)`));
+  return cookieMatch ? decodeURIComponent(cookieMatch[2]) : null;
 };
 
+export const fetchFullSyncData = async () => {
+  // Helper function to get cookie by name
 
-// Function to fetch previews for each photo hash
-export const fetchPreviewsByHash = async (photoHashes: string[]) => {
-  try {
-    // Fetch previews for each photo hash
-    const previewData = await Promise.all(
-      photoHashes.map(async (hash) => {
-        const previewResponse = await fetch(`${API_URL}/preview/${hash}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
+  const authToken = getCookie('authToken'); // Retrieve the authToken from cookies
 
-        if (!previewResponse.ok) {
-          throw new Error(`Failed to fetch preview for hash: ${hash}`);
-        }
-
-        const preview = await previewResponse.json();
-        return { hash, preview };
-      })
-    );
-
-    return previewData; // Return the fetched preview data
-  } catch (err) {
-    console.error('Error fetching preview data:', err);
-    throw err;
+  if (!authToken) {
+    throw new Error('Auth token not found');
   }
+
+  const response = await fetch('/api/sync/full', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${authToken}`, // Set the Authorization header
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // Handle the error if the response is not ok
+  if (!response.ok) {
+    let errorMessage = 'Network response was not ok';
+    
+    // Attempt to parse the response as JSON for error details
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage; // Use the server's message if available
+    } else {
+      // If the response is not JSON, return the text response
+      errorMessage = await response.text();
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  const data = await response.json(); // Assuming the response is in JSON format
+  return data.photoHashes; // Adjust according to your API response structure
 };

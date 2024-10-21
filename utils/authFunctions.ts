@@ -1,7 +1,9 @@
 // utils/authFunctions.ts
-import { cookies } from "next/headers";
+
+import Cookies from "js-cookie"; // Client-side cookie library
 import { SignInRequest, SignUpRequest } from "../types/AuthModels"; // Import models
 
+// SignIn Function
 export async function postSignIn(
   username: string,
   password: string,
@@ -24,7 +26,8 @@ export async function postSignIn(
 
     const token = data.token;
 
-    cookies().set("authToken", token, { secure: true, path: "/" });
+    // Set the token in the client-side cookie
+    Cookies.set("authToken", token, { secure: true, path: "/" });
 
     return true;
   } else {
@@ -32,6 +35,7 @@ export async function postSignIn(
   }
 }
 
+// SignUp Function
 export const postSignUp = async () => {
   const usernameInput = document.getElementById(
     "username",
@@ -48,7 +52,6 @@ export const postSignUp = async () => {
   const username = usernameInput.value;
   const password = passwordInput.value;
 
-  // Create the typed request object using SignUpRequest model
   const signUpData: SignUpRequest = { username, password };
 
   const response = await fetch("/api/auth/signup", {
@@ -64,6 +67,7 @@ export const postSignUp = async () => {
   }
 };
 
+// Navigation functions
 export const getSignUp = (router: any) => {
   router.push("/sign_up"); // Navigate to the SignUp page
 };
@@ -72,11 +76,9 @@ export const getSignIn = (router: any) => {
   router.push("/"); // Navigate to the SignIn page
 };
 
+// Logout function
 export const getLogout = () => {
-  // Delete the authToken cookie by setting its expiration date to a past date
-  //document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-  // To remove all cookies, loop over them
+  // Remove all cookies by setting their expiration date to a past date
   const cookies = document.cookie.split(";");
 
   for (let i = 0; i < cookies.length; i++) {

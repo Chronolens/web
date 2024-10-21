@@ -1,57 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { fetchFullSyncData } from '../../pages/api/genRequests'; // Import only fetchFullSyncData
+// app/gallery/PageContent.js
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const PageContent = () => {
-  const [contentData, setContentData] = useState(null); // State to store fetched data
-  const [loading, setLoading] = useState(true); // State to manage loading state
-  const [error, setError] = useState(null); // State to manage errors
+    const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Fetch data from the /sync/full endpoint upon component mount
-    const fetchData = async () => {
-      try {
-        // Call the fetchFullSyncData function to get the photo hashes
-        const photoHashes = await fetchFullSyncData();
+    useEffect(() => {
+        const fetchData = async () => {
+            const token = Cookies.get("authToken");
 
-        // Save the fetched photo hashes to state
-        setContentData(photoHashes);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err.message);
-        setLoading(false);
-      }
-    };
+            if (!token) {
+                setError("No authToken found in cookies.");
+                setLoading(false);
+                return;
+            }
 
-    fetchData(); // Call the fetch function
-  }, []);
+            try {
+                const response = await fetch('/api/sync', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
-  // Render loading state, error state, or the content
-  return (
-    <main className="flex-1 p-8">
-      <h2 className="text-2xl font-semibold">Main Content Area</h2>
-      
-      {/* Show a loading message */}
-      {loading && <p>Loading...</p>}
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
 
-      {/* Show an error message if there is any */}
-      {error && <p className="text-red-500">Error: {error}</p>}
+                const result = await response.json();
+                setData(result);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-      {/* Display the content once loaded */}
-      {!loading && !error && contentData && (
-        <div className="mt-4">
-          {contentData.map((hash) => (
-            <div key={hash} className="mb-4 p-4 bg-gray-100 rounded shadow">
-              <h3 className="font-bold">Photo Hash: {hash}</h3>
-            </div>
-          ))}
+        fetchData();
+    }, []);
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+
+    return (
+        <div>
+            <h1>Fetched Data</h1>
+            <pre>{JSON.stringify(data, null, 2)}</pre>
         </div>
-      )}
-
-      {/* Default message if there is no data */}
-      {!loading && !error && !contentData && <p>No content available</p>}
-    </main>
-  );
+    );
 };
 
 export default PageContent;
