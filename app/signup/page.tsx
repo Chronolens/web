@@ -1,7 +1,6 @@
 "use client"; // Ensure this is a Client Component
 
 import { useRouter } from "next/navigation"; // useRouter hook for navigation
-import { getSignIn, postSignUp } from "@/utils/authFunctions"; // Import the functions
 
 export default function SignUpPage() {
   const router = useRouter(); // Initialize the router
