@@ -15,7 +15,7 @@ export const fetchFullSyncData = async () => {
     throw new Error('Auth token not found');
   }
 
-  const response = await fetch('/api/sync/full', {
+  const response_sync = await fetch('/api/sync/full', {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${authToken}`, // Set the Authorization header
@@ -24,22 +24,26 @@ export const fetchFullSyncData = async () => {
   });
 
   // Handle the error if the response is not ok
-  if (!response.ok) {
+  if (!response_sync.ok) {
     let errorMessage = 'Network response was not ok';
     
     // Attempt to parse the response as JSON for error details
-    const contentType = response.headers.get('content-type');
+    const contentType = response_sync.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
-      const errorData = await response.json();
+      const errorData = await response_sync.json();
       errorMessage = errorData.message || errorMessage; // Use the server's message if available
     } else {
       // If the response is not JSON, return the text response
-      errorMessage = await response.text();
+      errorMessage = await response_sync.text();
     }
 
     throw new Error(errorMessage);
   }
 
-  const data = await response.json(); // Assuming the response is in JSON format
+  const data = await response_sync.json(); // Assuming the response is in JSON format
+
+
+
   return data.photoHashes; // Adjust according to your API response structure
 };
+
