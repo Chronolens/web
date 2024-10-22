@@ -41,9 +41,31 @@ export const fetchFullSyncData = async () => {
   }
 
   const data = await response_sync.json(); // Assuming the response is in JSON format
+  const previewLinks: string[] = [];
+  
+  for (const item of data) {
+    const id = item.id; // Get the id value from each object
 
+    // Make a request to the preview API with the id
+    const previewResponse = await fetch(`/preview/${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${authToken}`, // Set the Authorization header
+        'Content-Type': 'application/json',
+      },
+    });
 
+    // Check if the previewResponse is ok
+    if (!previewResponse.ok) {
+      const errorPreviewMessage = await previewResponse.text();
+      throw new Error(`Error fetching preview for id ${id}: ${errorPreviewMessage}`);
+    }
 
-  return data.photoHashes; // Adjust according to your API response structure
+    // Get the response string and append it to the previewLinks array
+    const previewData = await previewResponse.text(); // Assuming the response is text
+    previewLinks.push(previewData);
+  }
+
+  // Return the list of preview links
+  return previewLinks;
 };
-
