@@ -4,12 +4,13 @@ import { auth, signIn } from "@/auth";
 import API_URL from "../constants";
 
 export async function fetchWithCookies(url: string, options: RequestInit) {
-  const cookie = auth();
+  const session = await auth();
+  console.log("session: ", session);
   return fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${cookie}`,
+      Authorization: `Bearer ${session?.accessToken}`,
     },
   });
 }
@@ -23,11 +24,13 @@ export async function fetchSignIn(credentials: FormData) {
 
 export const fetchFullSyncData = async () => {
   try {
-    const fullSyncResponse = await fetchWithCookies(`${API_URL}sync/full`, {
+    console.log("here");
+    const fullSyncResponse = await fetchWithCookies(`${API_URL}/sync/full`, {
       method: "GET",
     });
 
     // FIX: give the status code to know if it is related with the cookies
+    console.log("fullSyncResponse: ", fullSyncResponse);
     if (!fullSyncResponse.ok) {
       throw new Error("Failed to fetch /sync/full");
     }

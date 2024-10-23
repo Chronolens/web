@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchFullSyncData } from '../../pages/api/genRequests'; // Import only fetchFullSyncData
+import { fetchFullSyncData } from '../lib/network/network';
 
 const PageContent = () => {
   const [contentData, setContentData] = useState(null); // State to store fetched data
@@ -30,7 +30,7 @@ const PageContent = () => {
   return (
     <main className="flex-1 p-8">
       <h2 className="text-2xl font-semibold">Main Content Area</h2>
-      
+
       {/* Show a loading message */}
       {loading && <p>Loading...</p>}
 
