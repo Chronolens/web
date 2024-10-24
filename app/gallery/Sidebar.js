@@ -29,9 +29,11 @@ const Sidebar = () => {
       </ul>
 
       {/* Calendar Component */}
+      {/*
       <div className="mt-8 px-4">
         <Calendar />
       </div>
+      */}
     </div>
   );
 };

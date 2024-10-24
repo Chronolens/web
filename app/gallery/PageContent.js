@@ -1,56 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import { fetchFullSyncData } from '../lib/network/network';
+import React, { useEffect, useState } from "react";
+import { fetchFullSyncData } from "../lib/network/network";
+// app/gallery/PageContent.js
 
 const PageContent = () => {
-  const [contentData, setContentData] = useState(null); // State to store fetched data
-  const [loading, setLoading] = useState(true); // State to manage loading state
-  const [error, setError] = useState(null); // State to manage errors
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch data from the /sync/full endpoint upon component mount
     const fetchData = async () => {
       try {
-        // Call the fetchFullSyncData function to get the photo hashes
-        const photoHashes = await fetchFullSyncData();
-
-        // Save the fetched photo hashes to state
-        setContentData(photoHashes);
-        setLoading(false);
+        const data = await fetchFullSyncData();
+        setData(data);
       } catch (err) {
-        console.error('Error fetching data:', err);
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchData(); // Call the fetch function
+    fetchData();
   }, []);
 
-  // Render loading state, error state, or the content
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  // Safely access the previewLinks array
+  const previewLinks = data?.previewLinks || [];
+
   return (
-    <main className="flex-1 p-8">
-      <h2 className="text-2xl font-semibold">Main Content Area</h2>
-
-      {/* Show a loading message */}
-      {loading && <p>Loading...</p>}
-
-      {/* Show an error message if there is any */}
-      {error && <p className="text-red-500">Error: {error}</p>}
-
-      {/* Display the content once loaded */}
-      {!loading && !error && contentData && (
-        <div className="mt-4">
-          {contentData.map((hash) => (
-            <div key={hash} className="mb-4 p-4 bg-gray-100 rounded shadow">
-              <h3 className="font-bold">Photo Hash: {hash}</h3>
-            </div>
-          ))}
+    <div className="p-6 h-screen">
+      <h1 className="text-2xl font-bold mb-6">Fetched Data</h1>
+      <div className="h-full overflow-y-scroll">
+        {" "}
+        {/* Scrollable container */}
+        {/* Adjust grid columns for different screen sizes */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4">
+          {previewLinks.length > 0 ? (
+            previewLinks.map((url, index) => (
+              <div key={index} className="overflow-hidden rounded-lg shadow-md">
+                <img
+                  src={url}
+                  alt={`Preview ${index}`}
+                  className="w-auto max-h-32 object-cover" // Keep good resolution and smaller size
+                />
+              </div>
+            ))
+          ) : (
+            <p>No images available</p>
+          )}
         </div>
-      )}
-
-      {/* Default message if there is no data */}
-      {!loading && !error && !contentData && <p>No content available</p>}
-    </main>
+      </div>
+    </div>
   );
 };
 
