@@ -15,11 +15,7 @@ export async function fetchWithCookies(url: string, options: RequestInit) {
   });
 }
 export async function fetchSignIn(credentials: FormData) {
-  try {
-    await signIn("credentials", credentials);
-  } catch (error) {
-    throw error;
-  }
+  await signIn("credentials", credentials);
 }
 
 export const fetchFullSyncData = async () => {

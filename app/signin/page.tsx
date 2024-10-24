@@ -1,11 +1,11 @@
 "use client"; // Ensure this is a Client Component
 
-import { signIn } from "@/auth";
-import { AuthError } from "next-auth";
-import { useRouter } from "next/navigation"; // useRouter hook for navigation
+import { useRouter } from "next/navigation";
 import { fetchSignIn } from "../lib/network/network";
 
-export default function SignInPage() {
+export default function SignInPage(props: {
+  searchParams: { callbackUrl: string | undefined };
+}) {
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -29,8 +29,13 @@ function LoginForm() {
 
   return (
     <form
-      action={(formData: FormData) => {
-        fetchSignIn(formData);
+      action={async (formData: FormData) => {
+        try {
+          fetchSignIn(formData);
+          router.push("/gallery");
+        } catch (error) {
+          console.error("Error signing in:", error);
+        }
       }}
       className="space-y-6"
     >

@@ -22,7 +22,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
         const loginData = await response.json();
-        console.log("loginData: ", loginData);
         return loginData ?? null;
       },
     }),
@@ -33,20 +32,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         return {
           ...token,
-          accessToken: user.token,
-          // refreshToken: user.refresh_token,
-          // expiresAt: user.expires_at,
+          accessToken: user.access_token,
+          refreshToken: user.refresh_token,
+          expiresAt: user.expires_at,
         };
-      }
-      // else if (Date.now() < token.expires_at) {
-      //   return token;
-      // }
-      else {
+      } else if (Date.now() < token.expires_at) {
+        return token;
+      } else {
+        // FIX: refresh token logic
         return token;
         // Subsequent logins, but the `access_token` has expired, try to refresh it
         //   if (!token.refresh_token) throw new TypeError("Missing refresh_token");
         //   try {
-        //     // TODO: refresh token logic
         //     return token;
         //   } catch (error) {
         //     console.error("Error refreshing access_token", error);
