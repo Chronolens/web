@@ -5,7 +5,6 @@ import API_URL from "../constants";
 
 export async function fetchWithCookies(url: string, options: RequestInit) {
   const session = await auth();
-  console.log("session: ", session);
   return fetch(url, {
     ...options,
     headers: {
