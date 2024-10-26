@@ -12,48 +12,42 @@ const PhotoDisplayer = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const fetchMorePics = async () => {
-    console.log("debug");
-    if (hashes.length === pictures.length) {
-      console.log(hashes.length);
-      console.log(pictures.length);
-      console.log("debug 1");
+    const localPreviews = [];
+    let itemNumber = (currentPage + 1) * pageSize;
+    if (itemNumber > hashes.length) {
       setHasMore(false);
-    } else {
-      const localPreviews = [];
-      const itemNumber = Math.min((currentPage + 1) * pageSize, hashes.length);
-      console.log("itemNumber: ", itemNumber);
-      let previewUrl =
-        "https://photutorial.com/wp-content/uploads/2023/04/Featured-image-AI-image-generators-by-Midjourney.png";
-      for (let i = currentPage * pageSize; i < itemNumber; i++) {
-        const current = hashes[i];
-        try {
-          previewUrl = await fetchPreviewById(current.id);
-        } catch (error) {
-          console.log(error);
-        }
-        const pic = {
-          id: current.id,
-          created_at: current.created_at,
-          hash: current.hash,
-          url: previewUrl,
-        };
-        localPreviews.push(pic);
-      }
-      setPictures([...pictures, ...localPreviews]);
-      setCurrentPage(currentPage + 1);
+      itemNumber = hashes.length;
     }
+    let previewUrl =
+      "https://photutorial.com/wp-content/uploads/2023/04/Featured-image-AI-image-generators-by-Midjourney.png";
+    for (let i = currentPage * pageSize; i < itemNumber; i++) {
+      const current = hashes[i];
+      try {
+        previewUrl = await fetchPreviewById(current.id);
+      } catch (error) {
+        console.log(error);
+      }
+      const pic = {
+        id: current.id,
+        created_at: current.created_at,
+        hash: current.hash,
+        url: previewUrl,
+      };
+      localPreviews.push(pic);
+    }
+    setPictures([...pictures, ...localPreviews]);
+    setCurrentPage(currentPage + 1);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       const fetchedHashes = await fetchFullSyncData();
-      // init the preview array
       const localPreviews = [];
-      const itemNumber = Math.min(
-        (currentPage + 1) * pageSize,
-        fetchedHashes.length,
-      );
-      console.log("itemNumber: ", itemNumber);
+      let itemNumber = (currentPage + 1) * pageSize;
+      if (itemNumber > fetchedHashes.length) {
+        setHasMore(false);
+        itemNumber = fetchedHashes.length;
+      }
       for (let i = currentPage * pageSize; i < itemNumber; i++) {
         const current = fetchedHashes[i];
         let previewUrl =
