@@ -1,7 +1,4 @@
 "use client";
-
-import Sidebar from "./Sidebar";
-import Header from "./Header";
 import PicDisplayer from "./PicDisplayer";
 //
 // {/* Static Sidebar */}
