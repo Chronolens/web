@@ -2,7 +2,7 @@
 
 import Sidebar from './Sidebar';
 import Header from './Header';
-import PageContent from './PageContent';
+import PicDisplayer from './PicDisplayer';
 
 export default function GalleryPage() {
   return (
@@ -16,7 +16,7 @@ export default function GalleryPage() {
 
         <Header />
 
-        <PageContent />
+        <PicDisplayer />
       </div>
     </div>
   );
