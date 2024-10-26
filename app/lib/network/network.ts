@@ -19,7 +19,6 @@ export async function fetchSignIn(credentials: FormData) {
 
 export const fetchFullSyncData = async () => {
   try {
-    console.log("here");
     const fullSyncResponse = await fetchWithCookies(`${API_URL}/sync/full`, {
       method: "GET",
     });
