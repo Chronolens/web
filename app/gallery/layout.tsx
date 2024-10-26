@@ -9,7 +9,8 @@ export default function DashboardLayout({
   return (
     <section>
       <Header />
-      <div className="h-screen flex flex-row justify-start">
+      <div className="h-screen flex justify-start">
+        <SideBar />
         {children}
       </div>
     </section>

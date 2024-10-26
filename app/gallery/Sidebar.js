@@ -10,9 +10,9 @@ import {
 
 const Sidebar = () => {
   return (
-    <aside className="h-screen w-60 bg-gray-800 text-white z-50">
+    <aside className="h-screen w-60 bg-gray-800 text-white">
       <nav>
-        <ul className="mt-12 space-y-4">
+        <ul className="mt-2 space-y-4">
           <li className="flex items-center space-x-4 pl-4 hover:bg-gray-600 transition-colors duration-300">
             <FontAwesomeIcon icon={faImages} />
             <button>Gallery</button>

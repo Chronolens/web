@@ -7,7 +7,7 @@ const PhotoDisplayer = () => {
   const [hashes, setHashes] = useState([]);
   const [pictures, setPictures] = useState([]);
 
-  const pageSize = 4;
+  const pageSize = 30;
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -80,26 +80,31 @@ const PhotoDisplayer = () => {
   }, []);
 
   return (
-    <InfiniteScroll
-      dataLength={pictures.length} // amount of elems to call each time //pictures.length
-      next={fetchMorePics}
-      hasMore={hasMore}
-      loader={<h4>Loading...</h4>}
-      endMessage={
-        <p style={{ textAlign: "center" }}>
-          <b>You reached the end</b>
-        </p>
-      }
-    >
-      {pictures.map((picture, index) => (
-        <img
-          key={index}
-          src={picture.url}
-          alt={`Photo ID: ${picture.id}`}
-          style={{ width: "30%", borderRadius: "8px" }}
-        />
-      ))}
-    </InfiniteScroll>
+    <div id="scrollableDiv" className="overflow-auto h-screen w-screen">
+      <InfiniteScroll
+        dataLength={pictures.length} // amount of elems to call each time //pictures.length
+        scrollableTarget="scrollableDiv"
+        next={fetchMorePics}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>You reached the end</b>
+          </p>
+        }
+      >
+        <div className="flex flex-wrap gap-1">
+          {pictures.map((picture, index) => (
+            <img
+              key={index}
+              src={picture.url}
+              alt={`Photo ID: ${picture.id}`}
+              style={{ height: "200px", borderRadius: "8px" }}
+            />
+          ))}
+        </div>
+      </InfiniteScroll>
+    </div>
   );
 };
 
