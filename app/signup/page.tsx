@@ -1,89 +1,101 @@
 "use client"; // Ensure this is a Client Component
 
-import { useRouter } from "next/navigation"; // useRouter hook for navigation
+import { useRouter } from "next/navigation";
+import { Logo, StyledInput } from "../login/page"; // Import Logo from the login page
+// import { fetchSignUp } from "../lib/network/network";
 
 export default function SignUpPage() {
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
-          className="mx-auto h-10 w-auto"
-          src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-          alt="Your Company"
-        />
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign up your account
-        </h2>
+    <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-t from-black to-purple-bg">
+      <div className="flex-col space-y-36 w-auto">
+        <Logo /> {/* Use Logo here */}
+        <SignUpForm />
       </div>
+    </div>
+  );
+}
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6">
+
+function SignUpForm() {
+  const router = useRouter();
+
+  return ( // Add this line
+    <div className="flex w-full items-center justify-center">
+      <div className="max-w-60">
+        <form
+          action={async (formData: FormData) => {
+            try {
+              // fetchSignUp(formData);
+              router.push("/login");
+            } catch (error) {
+              console.error("Error signing up:", error);
+            }
+          }}
+          className="space-y-6"
+        >
           <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Username
-            </label>
             <div className="mt-2">
-              <input
-                id="username"
-                name="username"
-                type="username"
-                autoComplete="username"
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              <StyledInput
+                id="email"
+                name="email"
+                placeholder="E-mail"
+                type="text"
+                autoComplete="e-mail"
               />
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Password
-              </label>
-              <div className="text-sm">
-                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
             <div className="mt-2">
-              <input
+              <StyledInput
+                id="server"
+                name="server"
+                placeholder="Server Address"
+                type="text"
+                autoComplete="server"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="mt-2">
+              <StyledInput
+                id="username"
+                name="username"
+                placeholder="Username"
+                type="text"
+                autoComplete="username"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="mt-2">
+              <StyledInput
                 id="password"
                 name="password"
                 type="password"
+                placeholder="Password"
                 autoComplete="current-password"
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
 
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => getSignIn(router)} // Use the imported handleSignUp function
-              className="flex w-full justify-center rounded-md bg-indigo-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300"
-            >
-              Sign in
-            </button>
-
-            <button
-              onClick={postSignUp} // Use the imported handleSignIn function
-              type="button"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Sign up
-            </button>
-          </div>
-
+          <input
+            type="submit"
+            value="Sign Up"
+            className="transition duration-300 flex w-full justify-center rounded-sm bg-foreground px-2 py-2 text-sm font-semibold leading-6 text-background hover:ease-in-out hover:bg-gray-400"
+          />
         </form>
+        <button
+          onClick={() => router.push("/login")}
+          type="button"
+          className="font-medium text-xs w-full justify-center"
+        >
+          Log In Instead
+        </button>
       </div>
     </div>
   );

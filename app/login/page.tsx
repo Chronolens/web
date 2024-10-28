@@ -16,7 +16,8 @@ export default function LoginPage(props: {
     </div>
   );
 }
-function Logo() {
+
+export function Logo() {
   return (
     <div className="flex-col text-center items-center justify-center">
       <h1 className="text-6xl">ChronoLens</h1>
