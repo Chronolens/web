@@ -11,7 +11,9 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        purple: { bg: "#392548"}
       },
+      fontSize: {xxs : ".625rem"},
     },
   },
   plugins: [
