@@ -7,7 +7,7 @@ const PhotoDisplayer = () => {
   const [hashes, setHashes] = useState([]);
   const [pictures, setPictures] = useState([]);
 
-  const pageSize = 30;
+  const pageSize = 20;
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -18,22 +18,9 @@ const PhotoDisplayer = () => {
       setHasMore(false);
       itemNumber = hashes.length;
     }
-    let previewUrl =
-      "https://photutorial.com/wp-content/uploads/2023/04/Featured-image-AI-image-generators-by-Midjourney.png";
     for (let i = currentPage * pageSize; i < itemNumber; i++) {
       const current = hashes[i];
-      try {
-        previewUrl = await fetchPreviewById(current.id);
-      } catch (error) {
-        console.log(error);
-      }
-      const pic = {
-        id: current.id,
-        created_at: current.created_at,
-        hash: current.hash,
-        url: previewUrl,
-      };
-      localPreviews.push(pic);
+      localPreviews.push(current);
     }
     setPictures([...pictures, ...localPreviews]);
     setCurrentPage(currentPage + 1);
@@ -42,6 +29,8 @@ const PhotoDisplayer = () => {
   useEffect(() => {
     const fetchData = async () => {
       const fetchedHashes = await fetchFullSyncData();
+      fetchedHashes.sort((a, b) => b.timestamp - a.timestamp);
+
       const localPreviews = [];
       let itemNumber = (currentPage + 1) * pageSize;
       if (itemNumber > fetchedHashes.length) {
@@ -50,20 +39,7 @@ const PhotoDisplayer = () => {
       }
       for (let i = currentPage * pageSize; i < itemNumber; i++) {
         const current = fetchedHashes[i];
-        let previewUrl =
-          "https://photutorial.com/wp-content/uploads/2023/04/Featured-image-AI-image-generators-by-Midjourney.png";
-        try {
-          previewUrl = await fetchPreviewById(current.id);
-        } catch (error) {
-          console.log(error);
-        }
-        const pic = {
-          id: current.id,
-          created_at: current.created_at,
-          hash: current.hash,
-          url: previewUrl,
-        };
-        localPreviews.push(pic);
+        localPreviews.push(current);
       }
       setPictures([...pictures, ...localPreviews]);
       setCurrentPage(currentPage + 1);
@@ -74,32 +50,76 @@ const PhotoDisplayer = () => {
   }, []);
 
   return (
-    <div id="scrollableDiv" className="overflow-auto h-screen w-screen">
+    <div id="scrollableDiv" className="overflow-auto h-full w-screen">
       <InfiniteScroll
         dataLength={pictures.length} // amount of elems to call each time //pictures.length
         scrollableTarget="scrollableDiv"
         next={fetchMorePics}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
-        endMessage={
-          <p style={{ textAlign: "center" }}>
-            <b>You reached the end</b>
-          </p>
-        }
       >
         <div className="flex flex-wrap gap-1">
           {pictures.map((picture, index) => (
-            <img
-              key={index}
-              src={picture.url}
-              alt={`Photo ID: ${picture.id}`}
-              style={{ height: "200px", borderRadius: "8px" }}
-            />
+            <PreviewDisplay key={index} picture={picture} />
           ))}
         </div>
       </InfiniteScroll>
     </div>
   );
 };
+
+// function PreviewDateSection({ pictures }: { pictures: any[] }) {
+//   const groupByDate = pictures.reduce((acc, picture) => {
+//     const currentDate = new Date(picture.timestamp).toDateString();
+//     if (!acc[currentDate]) {
+//       acc[currentDate] = [];
+//     } else {
+//       acc[currentDate].push(picture);
+//     }
+//     return acc;
+//   });
+//   return (
+//     {pictures.map((groupByDate, index) => (
+//       <h1 className="text-2xl font-bold">{.toDateString()}</h1>
+//         <div className="flex flex-wrap gap-1">
+//           {pictures.map((picture, index) => (
+//             <PreviewDisplay key={index} picture={picture} />
+//           ))}
+//     </div>
+//     ))}
+//   );
+// }
+//
+
+function PreviewDisplay({ key, picture }) {
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchPreview = async () => {
+      try {
+        const previewUrl = await fetchPreviewById(picture.id);
+        setPreviewUrl(previewUrl);
+      } catch (error) {
+        setError(error);
+      }
+    };
+    fetchPreview();
+  }, []);
+  return error ? (
+    <img
+      key={key}
+      src={"/images/image-placeholder.jpg"}
+      alt={`Photo ID: ${picture.id}`}
+      className="object-cover max-w-80 h-52"
+    />
+  ) : (
+    <img
+      key={key}
+      src={previewUrl}
+      alt={`Photo ID: ${picture.id}`}
+      className="object-cover max-w-80 h-52"
+    />
+  );
+}
 
 export default PhotoDisplayer;
