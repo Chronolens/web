@@ -43,28 +43,24 @@ function LoginForm() {
         >
           <div>
             <div className="mt-2">
-              <input
+              <StyledInput
                 id="username"
                 name="username"
                 placeholder="Username"
                 type="text"
                 autoComplete="username"
-                required
-                className="block bg-transparent w-full transition duration-300 ease-in-out border-0 border-b border-gray-500 py-2 text-white focus:ring-0 focus:border-white focus:ease-in-out"
               />
             </div>
           </div>
 
           <div>
             <div className="mt-2">
-              <input
+              <StyledInput
                 id="password"
                 name="password"
                 type="password"
                 placeholder="Password"
                 autoComplete="current-password"
-                required
-                className="block bg-transparent w-full transition duration-300 ease-in-out border-0 border-b border-gray-500 py-2 text-white focus:ring-0 focus:border-white focus:ease-in-out"
               />
             </div>
             <div className="flex mt-3 w-full justify-end">
@@ -94,5 +90,19 @@ function LoginForm() {
         </button>
       </div>
     </div>
+  );
+}
+
+export function StyledInput(props) {
+  return (
+    <input
+      id={props.id}
+      name={props.name}
+      placeholder={props.placeholder}
+      type={props.type}
+      autoComplete={props.autoComplete}
+      required
+      className="block bg-transparent w-full transition duration-300 ease-in-out border-0 border-b border-gray-500 py-2 text-white focus:ring-0 focus:border-white focus:ease-in-out"
+    />
   );
 }
