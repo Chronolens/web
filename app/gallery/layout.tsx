@@ -8,11 +8,11 @@ export default function DashboardLayout({
 }) {
   return (
     <section>
-      <Header />
-      <div className="h-screen flex justify-start">
-        <SideBar />
-        {children}
-      </div>
+        <Header />
+        <main className="h-screen flex justify-start">
+          <SideBar />
+          {children}
+        </main>
     </section>
   );
 }
