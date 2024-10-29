@@ -11,7 +11,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         // FIX: relocate this fetch to the network file
-        console.log("credentials: ", credentials);
         const response = await fetch(`${API_URL}/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -58,6 +57,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   pages: {
-    signIn: "/signin",
+    signIn: "/login",
   },
 });

@@ -1,14 +1,14 @@
-// export { auth as middleware} from "@/auth";
 import { auth } from "@/auth";
-import { NextResponse } from "next/server";
 
-const unprotectedPaths = ["/signin", "/signup"];
+const unprotectedPaths = ["/login", "/signup"];
+
 export default auth((req) => {
-  if (req.nextUrl.pathname.startsWith("/_next")) {
-    return NextResponse.next();
-  }
   if (!req.auth && !unprotectedPaths.includes(req.nextUrl.pathname)) {
-    const newUrl = new URL("/signin", req.nextUrl.origin);
+    const newUrl = new URL("/login", req.nextUrl.origin);
     return Response.redirect(newUrl);
   }
 });
+
+export const config = {
+ matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};
