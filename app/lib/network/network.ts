@@ -5,7 +5,6 @@ import API_URL from "../constants";
 
 export async function fetchWithCookies(url: string, options: RequestInit) {
   const session = await auth();
-  console.log("session: ", session);
   return fetch(url, {
     ...options,
     headers: {
@@ -20,24 +19,23 @@ export async function fetchSignIn(credentials: FormData) {
 
 export const fetchFullSyncData = async () => {
   try {
-    console.log("here");
     const fullSyncResponse = await fetchWithCookies(`${API_URL}/sync/full`, {
       method: "GET",
     });
 
     // FIX: give the status code to know if it is related with the cookies
-    console.log("fullSyncResponse: ", fullSyncResponse);
+    //console.log("fullSyncResponse: ", fullSyncResponse);
     if (!fullSyncResponse.ok) {
       throw new Error("Failed to fetch /sync/full");
     }
 
     const syncData = await fullSyncResponse.json(); // Get the JSON response
 
-    const photoHashes = Object.keys(syncData);
+    const photoHashes = Object.values(syncData);
 
     // Print syncData and photoHashes to the terminal
-    console.log("Full sync data:", syncData);
-    console.log("Extracted photo hashes:", photoHashes);
+    //console.log("Full sync data:", syncData);
+    //console.log("Extracted photo hashes:", photoHashes);
 
     return photoHashes; // Return the array of photo hashes
   } catch (err) {
@@ -47,26 +45,47 @@ export const fetchFullSyncData = async () => {
 };
 
 // Function to fetch previews for each photo hash
-export const fetchPreviewsByHash = async (photoHashes: string[]) => {
+export const fetchPreviewsByHash = async (photoIds: string[]) => {
   try {
     // Fetch previews for each photo hash
     const previewData = await Promise.all(
-      photoHashes.map(async (hash) => {
-        const previewResponse = await fetch(`${API_URL}/preview/${hash}`, {
+      photoIds.map(async (id) => {
+        const previewResponse = await fetch(`${API_URL}/preview/${id}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
 
         if (!previewResponse.ok) {
-          throw new Error(`Failed to fetch preview for hash: ${hash}`);
+          throw new Error(`Failed to fetch preview for id: ${id}`);
         }
 
         const preview = await previewResponse.json();
-        return { hash, preview };
+        console.log(preview)
+        return { id, preview };
       }),
     );
 
     return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error("Error fetching preview data:", err);
+    throw err;
+  }
+};
+
+// Function to fetch preview URL for a single photo ID
+export const fetchPreviewById = async (photoId: string) => {
+  try {
+    // Fetch preview for the given photo ID
+    const previewResponse = await fetchWithCookies(`${API_URL}/preview/${photoId}`, {
+      method: "GET"
+    });
+
+    if (!previewResponse.ok) {
+      throw new Error(`Failed to fetch preview for ID: ${photoId}`);
+    }
+
+    const previewUrl = await previewResponse.text(); // Fetches the URL directly as text
+    return previewUrl; // Return the URL
   } catch (err) {
     console.error("Error fetching preview data:", err);
     throw err;

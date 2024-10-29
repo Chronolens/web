@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faUpload } from '@fortawesome/free-solid-svg-icons';
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass, faUpload } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
   const [menuOpen, setMenuOpen] = useState(false); // State to control menu visibility
   const menuRef = useRef(null); // Reference to the menu element
 
@@ -12,28 +13,28 @@ const Header = () => {
   };
 
   const handleSearchSubmit = async (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault(); // Prevent the default form submission
       try {
-        const response = await fetch('/api/search', {
-          method: 'POST',
+        const response = await fetch("/api/search", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ query: searchInput }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
 
         const data = await response.json();
-        console.log('Search results:', data);
+        console.log("Search results:", data);
         // Handle the search results as needed (e.g., update state or display results)
       } catch (error) {
-        console.error('Error during search:', error);
+        console.error("Error during search:", error);
       }
-      setSearchInput(''); // Clear the input field after submission
+      setSearchInput(""); // Clear the input field after submission
     }
   };
 
@@ -49,9 +50,9 @@ const Header = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [menuRef]);
 
@@ -90,14 +91,21 @@ const Header = () => {
               onClick={handleProfileClick}
               className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white"
             >
-              <span className="font-bold">P</span> {/* Profile Icon Placeholder */}
+              <span className="font-bold">P</span>{" "}
+              {/* Profile Icon Placeholder */}
             </button>
             {menuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
                 <ul className="py-1">
-                  <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">Profile</li>
-                  <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">Settings</li>
-                  <li className="block px-4 py-2 text-white bg-red-500 hover:bg-red-600 cursor-pointer">Log Out</li>
+                  <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">
+                    Profile
+                  </li>
+                  <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">
+                    Settings
+                  </li>
+                  <li className="block px-4 py-2 text-white bg-red-500 hover:bg-red-600 cursor-pointer">
+                    Log Out
+                  </li>
                 </ul>
               </div>
             )}

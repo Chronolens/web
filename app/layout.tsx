@@ -16,8 +16,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={outfit.className}>
-      <body>{children}</body>
+      <body className="overflow-hidden">
+      {children}</body>
     </html>
   );
 }
-
