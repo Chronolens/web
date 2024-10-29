@@ -10,7 +10,7 @@ import {
 
 const Sidebar = () => {
   return (
-    <aside className="h-screen w-60 bg-gray-800 text-white overflow-clip">
+    <aside className="h-screen w-64 bg-background text-foreground overflow-clip">
       <nav>
         <ul className="mt-2 space-y-4">
           <li className="flex items-center space-x-4 pl-4 hover:bg-gray-600 transition-colors duration-300">

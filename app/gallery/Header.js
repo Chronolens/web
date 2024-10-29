@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUpload } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
 
 const Header = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -57,58 +58,66 @@ const Header = () => {
   }, [menuRef]);
 
   return (
-    <header className="sticky top-0 left-0 w-full bg-black text-white py-4 px-8 shadow-md z-40">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold">Gallery</h1>
+    <header className="w-screen h-20 bg-background text-foreground px-4 py-4 z-40">
+      <div className="flex flex-row items-center">
+        <Image
+          src="/images/header-logo.png"
+          width={440}
+          height={78}
+          className="flex-none w-44"
+        />
 
         {/* Search Bar */}
-        <div className="relative w-1/3">
-          <div className="flex items-center border border-gray-300 rounded-full bg-gray-200">
-            <FontAwesomeIcon
-              icon={faMagnifyingGlass}
-              className="text-gray-400 mx-2" // Added horizontal margin for spacing
-            />
+        <div className="pl-9 flex-1 w-14">
+          <div className="relative">
             <input
               type="text"
               value={searchInput}
               onChange={handleSearchInputChange}
               onKeyDown={handleSearchSubmit} // Handle keydown for "Enter"
-              className="pl-2 py-2 w-full rounded-full bg-gray-200 text-black border-0 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-background pl-9 py-2 border-transparent border-b-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Search..."
             />
+            <div className="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                className="text-gray-400"
+              />
+            </div>
           </div>
         </div>
-
         {/* Right Buttons */}
-        <div className="flex items-center space-x-4">
-          <button className="flex items-center justify-center p-2 rounded-full bg-gray-200 hover:bg-gray-300">
-            <FontAwesomeIcon icon={faUpload} className="text-gray-600" />
-          </button>
-
-          {/* Profile Button */}
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={handleProfileClick}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white"
-            >
-              <span className="font-bold">P</span>{" "}
-              {/* Profile Icon Placeholder */}
+        <div className="flex-end">
+          <div className="flex flex-row items-center space-x-4">
+            <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300">
+              <FontAwesomeIcon icon={faUpload} className="text-gray-600" />
             </button>
-            {menuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
-                <ul className="py-1">
-                  <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">
-                    Profile
-                  </li>
-                  <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">
-                    Settings
-                  </li>
-                  <li className="block px-4 py-2 text-white bg-red-500 hover:bg-red-600 cursor-pointer">
-                    Log Out
-                  </li>
-                </ul>
-              </div>
-            )}
+
+            {/* Profile Button */}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={handleProfileClick}
+                className="items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white"
+              >
+                <span className="font-bold">P</span>{" "}
+                {/* Profile Icon Placeholder */}
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                  <ul className="py-1">
+                    <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">
+                      Profile
+                    </li>
+                    <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">
+                      Settings
+                    </li>
+                    <li className="block px-4 py-2 text-white bg-red-500 hover:bg-red-600 cursor-pointer">
+                      Log Out
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
