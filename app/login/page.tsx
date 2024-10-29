@@ -1,8 +1,7 @@
-"use client"; // Ensure this is a Client Component
-
-import { useRouter } from "next/navigation";
+"use client";
+import { redirect } from "next/navigation";
 import { fetchSignIn } from "../lib/network/network";
-export const dynamic = "force-dynamic";
+import Image from "next/image";
 
 export default function LoginPage(props: {
   searchParams: { callbackUrl: string | undefined };
@@ -19,60 +18,61 @@ export default function LoginPage(props: {
 
 export function Logo() {
   return (
-    <div className="flex-col text-center items-center justify-center">
-      <h1 className="text-6xl">ChronoLens</h1>
+    <div className="w-[354px] items-center justify-center">
+      <Image
+        src={"/images/main-logo.png"}
+        alt="Main Logo"
+        width={708}
+        height={472}
+      />
     </div>
   );
 }
 
+async function handleFormAction(formData: FormData) {
+  try {
+    formData.set("redirectTo", "/gallery");
+    // TODO: set server address in the cookies or local storage
+    // the address comes in the formData.get("serverAddress")
+    fetchSignIn(formData);
+  } catch (error) {
+    console.error("Error signing in:", error);
+  }
+}
 function LoginForm() {
-  const router = useRouter();
-
   return (
     <div className="flex w-full items-center justify-center">
       <div className="max-w-60">
-        <form
-          action={async (formData: FormData) => {
-            try {
-              fetchSignIn(formData);
-              router.push("/gallery");
-            } catch (error) {
-              console.error("Error signing in:", error);
-            }
-          }}
-          className="space-y-6"
-        >
-          <div>
-            <div className="mt-2">
-              <StyledInput
-                id="username"
-                name="username"
-                placeholder="Username"
-                type="text"
-                autoComplete="username"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="mt-2">
-              <StyledInput
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Password"
-                autoComplete="current-password"
-              />
-            </div>
-            <div className="flex mt-3 w-full justify-end">
-              <div className="text-xs">
-                <a
-                  // TODO: href="#"
-                  className="font-semibold text-violet-500 hover:text-violet-400"
-                >
-                  Forgot password?
-                </a>
-              </div>
+        <form action={handleFormAction} className="space-y-6">
+          <StyledInput
+            id="serverAddress"
+            name="serverAddress"
+            placeholder="Server Address"
+            type="text"
+            autoComplete="url"
+          />
+          <StyledInput
+            id="username"
+            name="username"
+            placeholder="Username"
+            type="text"
+            autoComplete="username"
+          />
+          <StyledInput
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Password"
+            autoComplete="current-password"
+          />
+          <div className="flex mt-3 w-full justify-end">
+            <div className="text-xs">
+              <a
+                // TODO: href="#"
+                className="font-semibold text-violet-500 hover:text-violet-400"
+              >
+                Forgot password?
+              </a>
             </div>
           </div>
 
@@ -83,7 +83,7 @@ function LoginForm() {
           />
         </form>
         <button
-          onClick={() => router.push("/signup")}
+          onClick={() => redirect("/signup")}
           type="button"
           className="font-medium text-xs w-full justify-center"
         >
