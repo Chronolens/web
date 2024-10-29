@@ -1,18 +1,18 @@
 import Header from "./Header";
 import SideBar from "./Sidebar";
 
-export default function DashboardLayout({
+export default function PrivateLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <section>
-        <Header />
-        <main className="h-screen flex justify-start">
-          <SideBar />
-          {children}
-        </main>
+    <section className="flex flex-col h-screen">
+      <Header />
+      <main className="flex overflow-hidden">
+        <SideBar />
+        <div className="flex overflow-auto">{children}</div>
+      </main>
     </section>
   );
 }
