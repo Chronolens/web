@@ -1,7 +1,7 @@
 "use client";
-import { redirect } from "next/navigation";
 import { fetchSignIn } from "../lib/network/network";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage(props: {
   searchParams: { callbackUrl: string | undefined };
@@ -40,6 +40,7 @@ async function handleFormAction(formData: FormData) {
   }
 }
 function LoginForm() {
+  const router = useRouter();
   return (
     <div className="flex w-full items-center justify-center">
       <div className="max-w-60">
@@ -83,7 +84,7 @@ function LoginForm() {
           />
         </form>
         <button
-          onClick={() => redirect("/signup")}
+          onClick={() => router.push("/signup")}
           type="button"
           className="font-medium text-xs w-full justify-center"
         >
