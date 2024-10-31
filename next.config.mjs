@@ -6,8 +6,11 @@ const nextConfig = {
       protocol: "https",
       hostname: "**",
     },
+   {
+      protocol: "http",
+      hostname: "10.0.0.50",
+    },
    ],
-    domains: ["10.0.0.50"],
   },
 };
 

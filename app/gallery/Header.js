@@ -61,10 +61,11 @@ const Header = () => {
     <header className="w-screen h-20 bg-background text-foreground px-4 py-4 z-40">
       <div className="flex flex-row items-center">
         <Image
-          src="/images/header-logo.png"
+          src="/static/images/header-logo.png"
           width={440}
           height={78}
           className="flex-none w-44"
+          alt=""
         />
 
         {/* Search Bar */}

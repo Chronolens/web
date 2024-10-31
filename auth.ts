@@ -36,20 +36,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       } else if (Date.now() < token.expires_at) {
         return token;
-      } else {
-        // FIX: refresh token logic
-        return token;
+      } else if (Date.now() >= token.expires_at) {
         // Subsequent logins, but the `access_token` has expired, try to refresh it
-        //   if (!token.refresh_token) throw new TypeError("Missing refresh_token");
-        //   try {
-        //     return token;
-        //   } catch (error) {
-        //     console.error("Error refreshing access_token", error);
-        //     // If we fail to refresh the token, return an error so we can handle it on the page
-        //     token.error = "RefreshTokenError";
-        //     return token;
-        //   }
+        if (!token.refresh_token) throw new TypeError("Missing refresh_token");
+        try {
+          const refreshResponse = await fetch(`${API_URL}/refresh`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              access_token: token.accessToken,
+              refresh_token: token.refreshToken,
+            }),
+          });
+          const refreshResponseBody = await refreshResponse.json();
+          return {
+            ...token,
+            accessToken: refreshResponseBody.access_token,
+            refreshToken: refreshResponseBody.refresh_token,
+            expiresAt: refreshResponseBody.expires_at,
+          };
+        } catch (error) {
+          console.error("Error refreshing access_token", error);
+          // If we fail to refresh the token, return an error so we can handle it on the page
+          token.error = "RefreshTokenError";
+          return token;
+        }
       }
+      return token;
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;

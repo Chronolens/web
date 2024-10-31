@@ -7,7 +7,7 @@ export default function GalleryPage() {
   const [hashes, setHashes] = useState([]);
   const [pictures, setPictures] = useState([]);
 
-  const pageSize = 20;
+  const pageSize = 30;
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -109,7 +109,7 @@ function PreviewDisplay({ key, picture }) {
   return error ? (
     <img
       key={key}
-      src={"/images/image-placeholder.jpg"}
+      src={"/static/images/image-placeholder.jpg"}
       alt={`Photo ID: ${picture.id}`}
       className="object-cover max-w-80 h-52"
     />
@@ -117,7 +117,7 @@ function PreviewDisplay({ key, picture }) {
     <img
       key={key}
       src={previewUrl}
-      alt={`Photo ID: ${picture.id}`}
+      alt=""
       className="object-cover max-w-80 h-52"
     />
   );

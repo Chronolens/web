@@ -20,8 +20,8 @@ export function Logo() {
   return (
     <div className="w-[354px] items-center justify-center">
       <Image
-        src={"/images/main-logo.png"}
-        alt="Main Logo"
+        src={"/static/images/main-logo.png"}
+        alt=""
         width={708}
         height={472}
       />
