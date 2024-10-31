@@ -75,7 +75,7 @@ const Header = () => {
               value={searchInput}
               onChange={handleSearchInputChange}
               onKeyDown={handleSearchSubmit} // Handle keydown for "Enter"
-              className="bg-background pl-9 py-2 border-transparent border-b-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="transition duration-500 bg-background pl-9 py-2 border-0 border-b border-gray-500 text-foreground focus:ring-0 focus:border-foreground focus:ease-in-out"
               placeholder="Search..."
             />
             <div className="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">

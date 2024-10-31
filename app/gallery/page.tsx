@@ -29,7 +29,8 @@ export default function GalleryPage() {
   useEffect(() => {
     const fetchData = async () => {
       const fetchedHashes = await fetchFullSyncData();
-      fetchedHashes.sort((a, b) => b.timestamp - a.timestamp);
+      console.log(fetchedHashes[0]);
+      fetchedHashes.sort((a, b) => b.created_at - a.created_at);
 
       const localPreviews = [];
       let itemNumber = (currentPage + 1) * pageSize;
