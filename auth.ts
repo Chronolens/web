@@ -34,9 +34,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           refreshToken: user.refresh_token,
           expiresAt: user.expires_at,
         };
-      } else if (Date.now() < token.expires_at) {
+      } else if (Date.now() < Number(token.expiresAt)) {
+        console.log("Token still valid");
         return token;
-      } else if (Date.now() >= token.expires_at) {
+      } else {
+        console.log("Token expired, trying to refresh");
         // Subsequent logins, but the `access_token` has expired, try to refresh it
         if (!token.refresh_token) throw new TypeError("Missing refresh_token");
         try {
@@ -49,6 +51,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }),
           });
           const refreshResponseBody = await refreshResponse.json();
+          if (!refreshResponse.ok) {
+            console.error("Error refreshing access_token", refreshResponse);
+            // If we fail to refresh the token, return an error so we can handle it on the page
+            token.error = "RefreshTokenError";
+            return token;
+          }
           return {
             ...token,
             accessToken: refreshResponseBody.access_token,
@@ -61,9 +69,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.error = "RefreshTokenError";
           return token;
         }
-      }
-      return token;
-    },
+      }     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;
       return session;
