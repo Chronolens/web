@@ -23,10 +23,8 @@ export const fetchFullSyncData = async () => {
       method: "GET",
     });
 
-    // FIX: give the status code to know if it is related with the cookies
-    //console.log("fullSyncResponse: ", fullSyncResponse);
     if (!fullSyncResponse.ok) {
-      throw new Error("Failed to fetch /sync/full");
+      throw new Error("Failed to fetch /sync/full" + fullSyncResponse.status);
     }
 
     const syncData = await fullSyncResponse.json(); // Get the JSON response
