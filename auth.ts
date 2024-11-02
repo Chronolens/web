@@ -1,6 +1,14 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import API_URL from "./app/lib/constants";
+import { login } from "./app/lib/network/network";
+
+class ServerError extends CredentialsSignin {
+  code: "ServerError";
+}
+class InvalidCredentials extends CredentialsSignin {
+  code: "InvalidCredentials";
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -10,18 +18,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: {},
       },
       authorize: async (credentials) => {
-        // FIX: relocate this fetch to the network file
-        const response = await fetch(`${API_URL}/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(credentials),
-        });
-        if (!response.ok) {
-          console.error("Error logging in", response);
-          return null;
+        try {
+          const response = await login(credentials);
+          if (!response.ok) {
+            throw new InvalidCredentials();
+          }
+          const loginData = await response.json();
+          return loginData ?? null;
+        } catch (e) {
+          console.log("something wrong with server address")
+          throw new ServerError();
         }
-        const loginData = await response.json();
-        return loginData ?? null;
       },
     }),
   ],
@@ -69,7 +76,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.error = "RefreshTokenError";
           return token;
         }
-      }     },
+      }
+    },
     async session({ session, token }) {
       session.accessToken = token.accessToken;
       return session;
