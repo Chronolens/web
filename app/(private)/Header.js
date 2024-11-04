@@ -1,13 +1,15 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUpload } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
+import { UploadContext } from "@/providers/uploadModal";
 
 const Header = () => {
   const [searchInput, setSearchInput] = useState("");
   const [menuOpen, setMenuOpen] = useState(false); // State to control menu visibility
   const menuRef = useRef(null); // Reference to the menu element
+  const { openUploadModal } = useContext(UploadContext);
 
   const handleSearchInputChange = (e) => {
     setSearchInput(e.target.value);
@@ -90,7 +92,7 @@ const Header = () => {
         {/* Right Buttons */}
         <div className="flex-end">
           <div className="flex flex-row items-center space-x-4">
-            <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300">
+            <button onClick={openUploadModal} className="p-2 bg-gray-200 hover:bg-gray-300">
               <FontAwesomeIcon icon={faUpload} className="text-gray-600" />
             </button>
 

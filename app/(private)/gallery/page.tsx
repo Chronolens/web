@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { fetchPreviewById, fetchFullSyncData } from "../lib/network/network";
+import { fetchPreviewById, fetchFullSyncData } from "@/lib/network/network";
 
 export default function GalleryPage() {
   const [hashes, setHashes] = useState([]);
   const [pictures, setPictures] = useState([]);
 
-  const pageSize = 30;
+  const pageSize = 40;
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
 

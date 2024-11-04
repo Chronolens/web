@@ -1,7 +1,7 @@
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import API_URL from "./app/lib/constants";
-import { login } from "./app/lib/network/network";
+import DEFAULT_SERVER_ADDRESS from "@/lib/constants";
+import { login } from "@/lib/network/network";
 
 class ServerError extends CredentialsSignin {
   code: "ServerError";
@@ -47,9 +47,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       } else {
         console.log("Token expired, trying to refresh");
         // Subsequent logins, but the `access_token` has expired, try to refresh it
-        if (!token.refresh_token) throw new TypeError("Missing refresh_token");
+        if (!token.refreshToken) throw new TypeError("Missing refresh_token");
         try {
-          const refreshResponse = await fetch(`${API_URL}/refresh`, {
+          // FIX: change this to the network folder
+          const refreshResponse = await fetch(`${DEFAULT_SERVER_ADDRESS}/refresh`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
