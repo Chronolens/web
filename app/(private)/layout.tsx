@@ -1,7 +1,8 @@
 import Header from "./Header";
 import SideBar from "./Sidebar";
-import UploadProvider from "@/providers/uploadModal";
+import UploadModalProvider from "@/providers/uploadModalProvider";
 import UploadModal from "./UploadModal";
+import UploadFilesProvider from "@/providers/uploadFilesProvider";
 
 export default function PrivateLayout({
   children, // will be a page or nested layout
@@ -9,7 +10,8 @@ export default function PrivateLayout({
   children: React.ReactNode;
 }) {
   return (
-    <UploadProvider>
+    <UploadModalProvider>
+      <UploadFilesProvider>
       <section className="flex flex-col h-screen relative">
         <Header />
         <main className="flex overflow-hidden">
@@ -18,6 +20,7 @@ export default function PrivateLayout({
         </main>
         <UploadModal />
       </section>
-    </UploadProvider>
+      </UploadFilesProvider>
+    </UploadModalProvider>
   );
 }

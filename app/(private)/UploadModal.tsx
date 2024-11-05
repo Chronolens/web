@@ -1,9 +1,10 @@
 "use client";
-import { UploadContext } from "@/providers/uploadModal";
+import { UploadModalContext } from "@/providers/uploadModalProvider";
 import { useContext } from "react";
 
 export default function UploadModal() {
-  const { isUploadModalOpen, closeUploadModal } = useContext(UploadContext);
+  const { isUploadModalOpen, closeUploadModal } =
+    useContext(UploadModalContext);
   if (!isUploadModalOpen) return null;
   return (
     <div
@@ -12,7 +13,7 @@ export default function UploadModal() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex flex-col rounded-md w-1/2 h-2/3 bg-black"
+        className="flex flex-col rounded-md w-1/2 h-2/3 bg-black justify-center"
       >
         <input
           id="hiddenFileInput"
@@ -22,18 +23,28 @@ export default function UploadModal() {
         />
 
         <div className="flex m-10 rounded-md border-2 border-dashed h-3/4 items-center justify-center">
-          <p>Drag & Drop your images here</p>
+          <DragAndDrop />
         </div>
 
         <div className="flex w-full items-center justify-center">
-          <button
-            onClick={() => document.getElementById("hiddenFileInput").click()}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md"
-          >
-            Browse Files
-          </button>
+          <UploadButton />
         </div>
       </div>
     </div>
+  );
+}
+
+function DragAndDrop() {
+  return <p>Drag & Drop your images here</p>;
+}
+
+function UploadButton() {
+  return (
+    <button
+      onClick={() => document.getElementById("hiddenFileInput").click()}
+      className="bg-blue-500 text-white px-4 py-2 rounded-md"
+    >
+      Browse Files
+    </button>
   );
 }

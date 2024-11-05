@@ -2,9 +2,9 @@
 
 import { createContext, useState } from "react";
 
-export const UploadContext = createContext({});
+export const UploadModalContext = createContext({});
 
-export default function UploadProvider({ children }) {
+export default function UploadModalProvider({ children }) {
   const [isUploadModalOpen, setIsModalOpen] = useState(false);
   const openUploadModal = () => setIsModalOpen(true);
   const closeUploadModal = () => setIsModalOpen(false);
@@ -14,6 +14,6 @@ export default function UploadProvider({ children }) {
     closeUploadModal,
   };
   return (
-    <UploadContext.Provider value={state}>{children}</UploadContext.Provider>
+    <UploadModalContext.Provider value={state}>{children}</UploadModalContext.Provider>
   );
 }

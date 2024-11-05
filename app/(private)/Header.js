@@ -3,13 +3,13 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUpload } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import { UploadContext } from "@/providers/uploadModal";
+import { UploadModalContext } from "@/providers/uploadModalProvider";
 
 const Header = () => {
   const [searchInput, setSearchInput] = useState("");
   const [menuOpen, setMenuOpen] = useState(false); // State to control menu visibility
   const menuRef = useRef(null); // Reference to the menu element
-  const { openUploadModal } = useContext(UploadContext);
+  const { openUploadModal } = useContext(UploadModalContext);
 
   const handleSearchInputChange = (e) => {
     setSearchInput(e.target.value);
