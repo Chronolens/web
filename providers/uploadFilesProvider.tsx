@@ -13,19 +13,19 @@ enum UploadFileStatus {
 
 class UploadFile {
   file: File;
+  url: string;
   name: string;
   size: number;
   status: UploadFileStatus;
   constructor(
     file: File,
-    name: string,
-    size: number,
-    status: UploadFileStatus,
   ) {
     this.file = file;
-    this.name = name;
-    this.size = size;
-    this.status = status;
+    this.url = URL.createObjectURL(file);
+    this.name = file.name;
+    this.size = file.size;
+    this.status = UploadFileStatus.IDLE;
+    console.log(this)
   }
 }
 
@@ -34,8 +34,9 @@ export default function UploadFilesProvider({ children }) {
   const addFiles = (newFiles: [File]) => {
     const fileArray = Array.from(newFiles).map(
       (file) =>
-        new UploadFile(file, file.name, file.size, UploadFileStatus.IDLE),
+        new UploadFile(file),
     );
+    console.log(files)
     setFiles((prev) => [...prev, ...fileArray]);
   };
   const removeFile = (index: number) => {
