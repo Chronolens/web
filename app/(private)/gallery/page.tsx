@@ -92,7 +92,7 @@ export default function GalleryPage() {
 // }
 //
 
-function PreviewDisplay({ key, picture }) {
+function PreviewDisplay({ picture }) {
   const [previewUrl, setPreviewUrl] = useState("");
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -108,14 +108,12 @@ function PreviewDisplay({ key, picture }) {
   }, []);
   return error ? (
     <img
-      key={key}
       src={"/static/images/image-placeholder.jpg"}
       alt={`Photo ID: ${picture.id}`}
       className="object-cover max-w-80 h-52"
     />
   ) : (
     <img
-      key={key}
       src={previewUrl}
       alt=""
       className="object-cover max-w-80 h-52"

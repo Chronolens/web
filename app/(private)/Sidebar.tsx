@@ -7,6 +7,8 @@ import {
   faClock,
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
+import logo from "@/public/static/images/side-bar-logo.png";
 import { useRouter, usePathname } from "next/navigation";
 // import Calendar from "./Calendar"; // Import the Calendar component
 
@@ -17,6 +19,20 @@ const sidebarItems = [
   { icon: faClock, text: "Timeline", link: "/timeline" },
   { icon: faMapMarkerAlt, text: "Map", link: "/map" },
 ];
+
+export default function Sidebar() {
+  return (
+    <aside className="h-screen w-64 bg-background text-foreground overflow-clip z-40">
+      <div className="flex h-20 items-center justify-center">
+        <Image src={logo} alt="" placeholder="blur" />
+      </div>
+      <SidebarNav />
+      <div className="flex h-full justify-items-end">
+        <button>Settings</button>
+      </div>
+    </aside>
+  );
+}
 
 export function SidebarItem({
   icon,
@@ -48,7 +64,8 @@ export function SidebarItem({
   );
 }
 
-export function SidebarNav({ pathname }) {
+export function SidebarNav() {
+  const pathname = usePathname();
   return (
     <nav>
       <ul>
@@ -63,14 +80,5 @@ export function SidebarNav({ pathname }) {
         ))}
       </ul>
     </nav>
-  );
-}
-
-export default function Sidebar() {
-  const pathname = usePathname();
-  return (
-    <aside className="h-screen w-64 bg-background text-foreground overflow-clip">
-      <SidebarNav pathname={pathname} />
-    </aside>
   );
 }

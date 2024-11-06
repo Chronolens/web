@@ -12,14 +12,14 @@ export default function PrivateLayout({
   return (
     <UploadModalProvider>
       <UploadFilesProvider>
-      <section className="flex flex-col h-screen relative">
-        <Header />
-        <main className="flex overflow-hidden">
+        <section className="flex flex-row h-screen relative">
           <SideBar />
-          <div className="flex overflow-auto">{children}</div>
-        </main>
-        <UploadModal />
-      </section>
+          <main className="flex flex-col overflow-hidden">
+            <Header />
+            <div className="flex overflow-auto">{children}</div>
+          </main>
+          <UploadModal />
+        </section>
       </UploadFilesProvider>
     </UploadModalProvider>
   );
