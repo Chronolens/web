@@ -26,7 +26,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const loginData = await response.json();
           return loginData ?? null;
         } catch (e) {
-          console.log("something wrong with server address")
+          console.log("something wrong with server address");
           throw new ServerError();
         }
       },
@@ -42,7 +42,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           expiresAt: user.expires_at,
         };
       } else if (Date.now() < Number(token.expiresAt)) {
-        console.log("Token still valid");
         return token;
       } else {
         console.log("Token expired, trying to refresh");
@@ -50,14 +49,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!token.refreshToken) throw new TypeError("Missing refresh_token");
         try {
           // FIX: change this to the network folder
-          const refreshResponse = await fetch(`${DEFAULT_SERVER_ADDRESS}/refresh`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              access_token: token.accessToken,
-              refresh_token: token.refreshToken,
-            }),
-          });
+          const refreshResponse = await fetch(
+            `${DEFAULT_SERVER_ADDRESS}/refresh`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                access_token: token.accessToken,
+                refresh_token: token.refreshToken,
+              }),
+            },
+          );
           const refreshResponseBody = await refreshResponse.json();
           if (!refreshResponse.ok) {
             console.error("Error refreshing access_token", refreshResponse);
