@@ -1,5 +1,9 @@
 "use client";
-import { UploadFilesContext } from "@/providers/uploadFilesProvider";
+import {
+  UploadFile,
+  UploadFilesContext,
+  useUploadFilesContext,
+} from "@/providers/uploadFilesProvider";
 import { UploadModalContext } from "@/providers/uploadModalProvider";
 import Image from "next/image";
 import { useContext, useState } from "react";
@@ -7,7 +11,7 @@ import { useContext, useState } from "react";
 export default function UploadModal() {
   const { isUploadModalOpen, closeUploadModal } =
     useContext(UploadModalContext);
-  const { addFiles } = useContext(UploadFilesContext);
+  const { addFiles } = useUploadFilesContext();
   const handleChange = (e) => {
     const files = e.target.files;
     console.log(files);
@@ -22,7 +26,7 @@ export default function UploadModal() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex flex-col rounded-md w-1/2 h-2/3 bg-black justify-center"
+        className="flex flex-col rounded-md w-3/5 h-2/3 bg-black justify-center"
       >
         <input
           id="hiddenFileInput"
@@ -49,7 +53,7 @@ const triggerFileInput = () => {
 
 function DragAndDrop() {
   const [isDragging, setIsDragging] = useState(false);
-  const { files, addFiles, removeFile } = useContext(UploadFilesContext);
+  const { files, addFiles } = useUploadFilesContext();
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
@@ -79,27 +83,12 @@ function DragAndDrop() {
         <div className="flex flex-col w-full space-y-2 overflow-auto">
           <div className="mx-10">
             {files.map((file, index) => (
-              <div
-                key={index}
-                className="h-20 w-full flex flex-row overflow-clip items-center justify-between"
-              >
-                <Image src={file.url} alt="" width={64} height={64} />
-                <p>{file.name}</p>
-                <p>{file.size}</p>
-                <p>{file.status}</p>
-                <button
-                  onClick={(index) => {
-                    removeFile(index);
-                  }}
-                >
-                  X
-                </button>
-              </div>
+              <UploadFileListItem index={index} file={file} />
             ))}
           </div>
         </div>
       ) : (
-        <div className="flex h-full w-full items-center justify-center rounded-md border-2 border-dashed">
+        <div className="flex mx-10 w-full items-center justify-center rounded-md border-2">
           <p>Drag & Drop your images here</p>
         </div>
       )}
@@ -107,13 +96,47 @@ function DragAndDrop() {
   );
 }
 
-function UploadButton() {
+function UploadFileListItem({
+  index,
+  file,
+}: {
+  index: number;
+  file: UploadFile;
+}) {
+  const { removeFile } = useUploadFilesContext();
   return (
-    <button
-      onClick={() => document.getElementById("hiddenFileInput").click()}
-      className="bg-foreground text-background px-4 py-2 rounded-md"
+    <div
+      index={index}
+      className="h-20 w-full flex flex-row overflow-clip items-center justify-between"
     >
-      Browse Files
-    </button>
+      <Image src={file.url} alt="" width={64} height={64} />
+      <p>{file.name}</p>
+      <p>{file.size}</p>
+      <p>{file.status}</p>
+      <button onClick={() => removeFile(index)}>X</button>
+    </div>
   );
+}
+
+function UploadButton() {
+  const { files, uploadAllFiles } = useUploadFilesContext();
+  if (files.length != 0) {
+    return (
+      <button
+        className="bg-foreground text-background px-4 py-2 rounded-md"
+        onClick={uploadAllFiles}
+      >
+        Upload All Files
+      </button>
+    );
+  } else {
+    return (
+      <button
+        onClick={() => document.getElementById("hiddenFileInput").click()}
+        className="bg-foreground text-background px-4 py-2 rounded-md"
+      >
+        Browse Files
+      </button>
+    );
+  }
 }

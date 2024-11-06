@@ -14,7 +14,6 @@ export async function fetchWithCookies(url: string, options: RequestInit) {
   return fetch(url, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${session?.accessToken}`,
     },
   });
@@ -32,9 +31,13 @@ export async function login(credentials) {
 export const fetchFullSyncData = async () => {
   const serverAddress = getServerAdrress();
   try {
-    const fullSyncResponse = await fetchWithCookies(`${serverAddress}/sync/full`, {
-      method: "GET",
-    });
+    const fullSyncResponse = await fetchWithCookies(
+      `${serverAddress}/sync/full`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
 
     if (!fullSyncResponse.ok) {
       throw new Error("Failed to fetch /sync/full" + fullSyncResponse.status);
@@ -92,6 +95,7 @@ export const fetchPreviewById = async (photoId: string) => {
     const previewResponse = await fetchWithCookies(
       `${serverAddress}/preview/${photoId}`,
       {
+        headers: { "Content-Type": "application/json" },
         method: "GET",
       },
     );
@@ -107,3 +111,29 @@ export const fetchPreviewById = async (photoId: string) => {
     throw err;
   }
 };
+
+export async function uploadFileAPI(fileFormData: FormData) {
+  const serverAddress = getServerAdrress();
+  const file = fileFormData.get("file") as File;
+
+  console.log("file: ", file.name);
+  console.log("type: ", file.type);
+  const arrayBuffer = await file.arrayBuffer();
+  const hash = await crypto.subtle.digest("SHA-1", arrayBuffer);
+  const b64Hash = btoa(String.fromCharCode(...new Uint8Array(hash)));
+  console.log("hash: ", b64Hash);
+
+  try {
+    const response = await fetchWithCookies(`${serverAddress}/upload`, {
+      method: "POST",
+      headers: {
+        "Content-Digest": `sha-1=:${b64Hash}:`,
+      },
+      body: fileFormData,
+    });
+    return response;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw error;
+  }
+}

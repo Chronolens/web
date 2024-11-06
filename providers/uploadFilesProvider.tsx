@@ -1,42 +1,47 @@
 "use client";
 
-import { createContext, useState } from "react";
+import { uploadFileAPI } from "@/lib/network/network";
+import { createContext, useContext, useState } from "react";
 
-export const UploadFilesContext = createContext({});
+export const UploadFilesContext = createContext<UploadFilesContextType>();
 
-enum UploadFileStatus {
+export enum UploadFileStatus {
   IDLE = "IDLE",
   UPLOADING = "UPLOADING",
   UPLOADED = "UPLOADED",
   ERROR = "ERROR",
 }
 
-class UploadFile {
+export interface UploadFilesContextType {
+  files: UploadFile[];
+  addFiles: (files: [File]) => void;
+  removeFile : (index: number) => void;
+  clearFiles: () => void;
+  uploadFile : (file: UploadFile) => void;
+  uploadAllFiles : () => void;
+}
+
+export class UploadFile {
   file: File;
   url: string;
   name: string;
   size: number;
   status: UploadFileStatus;
-  constructor(
-    file: File,
-  ) {
+  constructor(file: File) {
     this.file = file;
     this.url = URL.createObjectURL(file);
     this.name = file.name;
     this.size = file.size;
     this.status = UploadFileStatus.IDLE;
-    console.log(this)
+    console.log(this);
   }
 }
 
 export default function UploadFilesProvider({ children }) {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const addFiles = (newFiles: [File]) => {
-    const fileArray = Array.from(newFiles).map(
-      (file) =>
-        new UploadFile(file),
-    );
-    console.log(files)
+    const fileArray = Array.from(newFiles).map((file) => new UploadFile(file));
+    console.log(files);
     setFiles((prev) => [...prev, ...fileArray]);
   };
   const removeFile = (index: number) => {
@@ -57,27 +62,30 @@ export default function UploadFilesProvider({ children }) {
   const uploadFile = async (fileObj: UploadFile) => {
     const { file, name } = fileObj;
     try {
+      console.log("uploading file: ", name);
       updateFileProgress(name, UploadFileStatus.UPLOADING);
 
       const formData = new FormData();
       formData.append("file", file);
+      const response = await uploadFileAPI(formData);
+      console.log(response);
 
-      const response = await fetch("", { body: formData });
-
-      if (response.status === 200) {
+      if (response.ok) {
         updateFileProgress(name, UploadFileStatus.UPLOADED);
       } else {
         updateFileProgress(name, UploadFileStatus.ERROR);
       }
     } catch (error) {
+      console.log("error uploading file: ", error);
       updateFileProgress(name, UploadFileStatus.ERROR);
     }
   };
   const uploadAllFiles = async () => {
+    console.log("uploading all files");
     for (const file of files) {
       uploadFile(file);
     }
-  }
+  };
 
   const state = {
     files,
@@ -92,4 +100,7 @@ export default function UploadFilesProvider({ children }) {
       {children}
     </UploadFilesContext.Provider>
   );
+}
+export function useUploadFilesContext(){
+  return useContext(UploadFilesContext);
 }
