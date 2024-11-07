@@ -51,7 +51,7 @@ export default function GalleryPage() {
   }, []);
 
   return (
-    <div id="scrollableDiv" className="flex-1 overflow-auto h-full w-screen">
+    <div id="scrollableDiv" className="overflow-auto h-full">
       <InfiniteScroll
         dataLength={pictures.length}
         scrollableTarget="scrollableDiv"
