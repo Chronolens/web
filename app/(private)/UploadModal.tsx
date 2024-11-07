@@ -83,10 +83,10 @@ function DragAndDrop() {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      className="flex grow mx-10 overflow-scroll"
+      className="flex-1 ml-10 overflow-scroll"
     >
       {files.length != 0 ? (
-          <table className="w-full table-auto">
+          <table className="w-full table-fixed">
             <tbody>
               {files.map((file, index) => (
                 <UploadFileListItem key={index} index={index} file={file} />
@@ -115,7 +115,7 @@ function UploadFileListItem({
       <td>
         <Image src={file.url} alt="" width={64} height={64} />
       </td>
-      <td className="px-6 py-4 w-80">{file.name}</td>
+      <td className="px-6 py-4 w-80 truncate">{file.name}</td>
       <td className="px-6 py-4">{file.size}</td>
       <td className="px-6 py-4">{file.status}</td>
       <td className="pl-6 py-4">
