@@ -60,7 +60,7 @@ const Header = () => {
   }, [menuRef]);
 
   return (
-    <header className="h-20 bg-background text-foreground px-4 py-4 z-40">
+    <header className="flex-none h-20 bg-background text-foreground px-4 py-4 z-40">
       <div className="flex flex-row items-center">
         {/* Search Bar */}
         <div className="pl-3 flex-1 w-14">

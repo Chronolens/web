@@ -21,7 +21,7 @@ const sidebarItems = [
 export default function Sidebar() {
   return (
     <aside className="flex flex-col h-screen w-64 bg-background text-foreground overflow-clip z-40">
-      <div className="flex mx-2 h-20 items-center justify-center">
+      <div className="flex p-4 h-20 bg-gradient-metadata items-center justify-center">
         <Image src={logo} alt="" placeholder="blur" />
       </div>
       <SidebarNav />
@@ -51,7 +51,7 @@ export function SidebarItem({
   const router = useRouter();
   return (
     <li
-      className={`flex py-3 items-center space-x-4 pl-4 cursor-pointer ${selected ? "bg-gradient-sidebar-button" : "hover:bg-gradient-sidebar-button"}`}
+      className={`flex py-3 items-center space-x-4 pl-4 cursor-pointer ${selected ? "bg-gradient-sidebar-button text-blue-light" : "hover:bg-gradient-sidebar-button"}`}
       onClick={() => {
         router.push(link);
       }}
@@ -65,7 +65,7 @@ export function SidebarItem({
 export function SidebarNav() {
   const pathname = usePathname();
   return (
-    <nav>
+    <nav className="mt-4">
       <ul>
         {sidebarItems.map((item, index) => (
           <SidebarItem
