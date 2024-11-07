@@ -28,6 +28,18 @@ export async function login(credentials) {
   });
 }
 
+export async function refreshAccessToken(token) {
+  const serverAddress = getServerAdrress();
+  return fetch(`${serverAddress}/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      access_token: token.accessToken,
+      refresh_token: token.refreshToken,
+    }),
+  });
+}
+
 export const fetchFullSyncData = async () => {
   const serverAddress = getServerAdrress();
   try {

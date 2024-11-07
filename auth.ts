@@ -1,7 +1,7 @@
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import DEFAULT_SERVER_ADDRESS from "@/lib/constants";
-import { login } from "@/lib/network/network";
+import { login, refreshAccessToken } from "@/lib/network/network";
 
 class ServerError extends CredentialsSignin {
   code: "ServerError";
@@ -49,17 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!token.refreshToken) throw new TypeError("Missing refresh_token");
         try {
           // FIX: change this to the network folder
-          const refreshResponse = await fetch(
-            `${DEFAULT_SERVER_ADDRESS}/refresh`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                access_token: token.accessToken,
-                refresh_token: token.refreshToken,
-              }),
-            },
-          );
+          const refreshResponse = await refreshAccessToken(token);
           const refreshResponseBody = await refreshResponse.json();
           if (!refreshResponse.ok) {
             console.error("Error refreshing access_token", refreshResponse);
