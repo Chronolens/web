@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faUpload } from "@fortawesome/free-solid-svg-icons";
+import uploadIcon from "@/public/static/icons/CloudArrowUp.svg";
+import searchIcon from "@/public/static/icons/MagnifyingGlass.svg";
 import Image from "next/image";
 import { UploadModalContext } from "@/providers/uploadModalProvider";
 
@@ -63,7 +63,7 @@ const Header = () => {
     <header className="h-20 bg-background text-foreground px-4 py-4 z-40">
       <div className="flex flex-row items-center">
         {/* Search Bar */}
-        <div className="pl-9 flex-1 w-14">
+        <div className="pl-3 flex-1 w-14">
           <div className="relative">
             <input
               type="text"
@@ -73,19 +73,20 @@ const Header = () => {
               className="transition duration-500 bg-background pl-9 py-2 border-0 border-b border-gray-500 text-foreground focus:ring-0 focus:border-foreground focus:ease-in-out"
               placeholder="Search..."
             />
-            <div className="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                className="text-gray-400"
-              />
+            <div className="absolute inset-y-0 left-0 pl-1 flex items-center text-gray-400">
+              <Image src={searchIcon} alt="Search Icon" />
             </div>
           </div>
         </div>
         {/* Right Buttons */}
-        <div className="flex-end">
+        <div className="ml-auto">
           <div className="flex flex-row items-center space-x-4">
-            <button onClick={openUploadModal} className="p-2 bg-gray-200 hover:bg-gray-300">
-              <FontAwesomeIcon icon={faUpload} className="text-gray-600" />
+            <button
+              onClick={openUploadModal}
+              className="flex flex-row items-center justify-center"
+            >
+              <Image src={uploadIcon} alt="Upload" />
+              <p className="pl-1"> Upload </p>
             </button>
 
             {/* Profile Button */}

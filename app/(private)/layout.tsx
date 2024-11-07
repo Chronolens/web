@@ -14,9 +14,9 @@ export default function PrivateLayout({
       <UploadFilesProvider>
         <section className="flex flex-row h-screen relative">
           <SideBar />
-          <main className="flex flex-col overflow-hidden">
+          <main className="flex flex-col w-screen overflow-hidden">
             <Header />
-            <div className="flex overflow-auto">{children}</div>
+            <div className="grow overflow-auto">{children}</div>
           </main>
           <UploadModal />
         </section>
