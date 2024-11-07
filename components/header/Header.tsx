@@ -1,45 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef, useContext } from "react";
 import uploadIcon from "@/public/static/icons/CloudArrowUp.svg";
-import searchIcon from "@/public/static/icons/MagnifyingGlass.svg";
 import Image from "next/image";
 import { UploadModalContext } from "@/providers/uploadModalProvider";
+import { HeaderSearchBar } from "./HeaderSearchBar";
 
-const Header = () => {
-  const [searchInput, setSearchInput] = useState("");
+export function PrivateHeader() {
   const [menuOpen, setMenuOpen] = useState(false); // State to control menu visibility
   const menuRef = useRef(null); // Reference to the menu element
   const { openUploadModal } = useContext(UploadModalContext);
-
-  const handleSearchInputChange = (e) => {
-    setSearchInput(e.target.value);
-  };
-
-  const handleSearchSubmit = async (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Prevent the default form submission
-      try {
-        const response = await fetch("/api/search", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ query: searchInput }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        console.log("Search results:", data);
-        // Handle the search results as needed (e.g., update state or display results)
-      } catch (error) {
-        console.error("Error during search:", error);
-      }
-      setSearchInput(""); // Clear the input field after submission
-    }
-  };
 
   const handleProfileClick = () => {
     setMenuOpen((prev) => !prev); // Toggle menu visibility
@@ -62,22 +31,8 @@ const Header = () => {
   return (
     <header className="flex-none h-20 bg-background text-foreground px-4 py-4 z-40">
       <div className="flex flex-row items-center">
-        {/* Search Bar */}
-        <div className="pl-3 flex-1 w-14">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchInput}
-              onChange={handleSearchInputChange}
-              onKeyDown={handleSearchSubmit} // Handle keydown for "Enter"
-              className="transition duration-500 bg-background pl-9 py-2 border-0 border-b border-gray-500 text-foreground focus:ring-0 focus:border-foreground focus:ease-in-out"
-              placeholder="Search..."
-            />
-            <div className="absolute inset-y-0 left-0 pl-1 flex items-center text-gray-400">
-              <Image src={searchIcon} alt="Search Icon" />
-            </div>
-          </div>
-        </div>
+        <HeaderSearchBar />
+
         {/* Right Buttons */}
         <div className="ml-auto">
           <div className="flex flex-row items-center space-x-4">
@@ -120,5 +75,3 @@ const Header = () => {
     </header>
   );
 };
-
-export default Header;
