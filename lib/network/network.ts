@@ -1,5 +1,4 @@
 "use server";
-
 import { auth } from "@/auth";
 import DEFAULT_SERVER_ADDRESS from "../constants";
 import { cookies } from "next/headers";
@@ -136,14 +135,14 @@ export async function uploadFileAPI(fileFormData: FormData) {
   console.log("hash: ", b64Hash);
 
   try {
-    const response = await fetchWithCookies(`${serverAddress}/upload`, {
+    const response = await fetchWithCookies(`${serverAddress}/image/upload`, {
       method: "POST",
       headers: {
         "Content-Digest": `sha-1=:${b64Hash}:`,
       },
       body: fileFormData,
     });
-    return response;
+    return { ok: response.ok, status: response.status };
   } catch (error) {
     console.error("Error uploading file:", error);
     throw error;
