@@ -1,7 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { fetchFullSyncData, fetchPreviewById } from "@/lib/network/network";
+import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { fetchPreviewById, fetchFullSyncData } from "@/lib/network/network";
 
 export default function GalleryPage() {
   const [hashes, setHashes] = useState([]);
@@ -51,7 +51,7 @@ export default function GalleryPage() {
   }, []);
 
   return (
-    <div id="scrollableDiv" className="overflow-auto h-full">
+    <div id="scrollableDiv" className="h-full overflow-auto">
       <InfiniteScroll
         dataLength={pictures.length}
         scrollableTarget="scrollableDiv"
@@ -110,13 +110,9 @@ function PreviewDisplay({ picture }) {
     <img
       src={"/static/images/image-placeholder.jpg"}
       alt={`Photo ID: ${picture.id}`}
-      className="object-cover max-w-80 h-52"
+      className="h-52 max-w-80 object-cover"
     />
   ) : (
-    <img
-      src={previewUrl}
-      alt=""
-      className="object-cover max-w-80 h-52"
-    />
+    <img src={previewUrl} alt="" className="h-52 max-w-80 object-cover" />
   );
 }

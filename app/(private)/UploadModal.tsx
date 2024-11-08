@@ -94,7 +94,7 @@ function DragAndDrop() {
             </tbody>
           </table>
       ) : (
-        <div className="flex w-full items-center justify-center rounded-lg border-2">
+        <div className="flex mr-10 h-full items-center justify-center rounded-lg border-2">
           <p>Drag & Drop your images here</p>
         </div>
       )}
