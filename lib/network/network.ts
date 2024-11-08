@@ -13,6 +13,7 @@ export async function fetchWithCookies(url: string, options: RequestInit) {
   return fetch(url, {
     ...options,
     headers: {
+      ...options.headers,
       Authorization: `Bearer ${session?.accessToken}`,
     },
   });
@@ -127,20 +128,19 @@ export async function uploadFileAPI(fileFormData: FormData) {
   const serverAddress = getServerAdrress();
   const file = fileFormData.get("file") as File;
 
-  console.log("file: ", file.name);
-  console.log("type: ", file.type);
   const arrayBuffer = await file.arrayBuffer();
   const hash = await crypto.subtle.digest("SHA-1", arrayBuffer);
   const b64Hash = btoa(String.fromCharCode(...new Uint8Array(hash)));
-  console.log("hash: ", b64Hash);
 
+  const uploadFormData = new FormData();
+  uploadFormData.set(b64Hash, file);
   try {
     const response = await fetchWithCookies(`${serverAddress}/image/upload`, {
       method: "POST",
       headers: {
-        "Content-Digest": `sha-1=:${b64Hash}:`,
+        Timestamp: file.lastModified.toString(),
       },
-      body: fileFormData,
+      body: uploadFormData,
     });
     return { ok: response.ok, status: response.status };
   } catch (error) {
