@@ -148,3 +148,40 @@ export async function uploadFileAPI(fileFormData: FormData) {
     throw error;
   }
 }
+
+// Function to fetch 50 logs
+export const fetchLogs = async (page: number) => {
+  const serverAddress = getServerAdrress();
+
+  console.log(`${serverAddress}/logs?page=${page}&page_size=50`);
+
+  try {
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/logs?page=1&page_size=10`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    // Check if response is JSON
+    console.log("Response received:", previewResponse);
+
+    if (!previewResponse.ok) {
+      throw new Error(`Failed to fetch logs; page: ${page}`);
+    }
+
+    const contentType = previewResponse.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const logs = await previewResponse.json();
+      return logs;
+    } else {
+      const text = await previewResponse.text();
+      console.error("Unexpected response format:", text);
+      throw new Error("Expected JSON response");
+    }
+  } catch (err) {
+    console.error("Error fetching logs:", err);
+    throw err;
+  }
+};

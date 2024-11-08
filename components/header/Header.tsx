@@ -57,7 +57,7 @@ export function PrivateHeader() {
                 <div className="absolute right-0 z-50 mt-2 w-48 rounded-md bg-white shadow-lg">
                   <ul className="py-1">
                     <li className="block cursor-pointer px-4 py-2 text-gray-800 hover:bg-gray-200">
-                      Profile
+                      <a href="/logs">Activity Logs</a>
                     </li>
                     <li className="block cursor-pointer px-4 py-2 text-gray-800 hover:bg-gray-200">
                       Settings
