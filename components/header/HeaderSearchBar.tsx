@@ -34,17 +34,17 @@ export function HeaderSearchBar() {
     }
   };
   return (
-    <div className="pl-3 flex-1 w-14">
+    <div className="w-14 flex-1 pl-3">
       <div className="relative">
         <input
           type="text"
           value={searchInput}
           onChange={handleSearchInputChange}
           onKeyDown={handleSearchSubmit} // Handle keydown for "Enter"
-          className="transition duration-500 bg-background pl-9 py-2 border-0 border-b border-gray-500 text-foreground focus:ring-0 focus:border-foreground focus:ease-in-out"
+          className="border-0 border-b border-gray-500 bg-background py-2 pl-9 text-foreground transition duration-500 focus:border-foreground focus:ring-0 focus:ease-in-out"
           placeholder="Search..."
         />
-        <div className="absolute inset-y-0 left-0 pl-1 flex items-center text-gray-400">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-1 text-gray-400">
           <Image src={searchIcon} alt="Search Icon" />
         </div>
       </div>

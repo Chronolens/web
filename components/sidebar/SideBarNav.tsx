@@ -19,7 +19,7 @@ const sidebarItems = [
 export function SideBarNav() {
   return (
     <nav className="mt-4 h-full">
-      <ul className="h-full flex flex-col">
+      <ul className="flex h-full flex-col">
         {sidebarItems.map((item, index) => (
           <SidebarItem
             key={index}

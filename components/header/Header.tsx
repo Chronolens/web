@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { UploadModalContext } from "@/providers/uploadModalProvider";
 import uploadIcon from "@/public/static/icons/CloudArrowUp.svg";
 import Image from "next/image";
-import { UploadModalContext } from "@/providers/uploadModalProvider";
+import { useContext, useEffect, useRef, useState } from "react";
 import { HeaderSearchBar } from "./HeaderSearchBar";
 
 export function PrivateHeader() {
@@ -29,7 +29,7 @@ export function PrivateHeader() {
   }, [menuRef]);
 
   return (
-    <header className="flex-none h-20 bg-background text-foreground px-4 py-4 z-40">
+    <header className="z-40 h-20 flex-none bg-background px-4 py-4 text-foreground">
       <div className="flex flex-row items-center">
         <HeaderSearchBar />
 
@@ -48,21 +48,21 @@ export function PrivateHeader() {
             <div className="relative" ref={menuRef}>
               <button
                 onClick={handleProfileClick}
-                className="items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white"
+                className="h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white"
               >
                 <span className="font-bold">P</span>{" "}
                 {/* Profile Icon Placeholder */}
               </button>
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                <div className="absolute right-0 z-50 mt-2 w-48 rounded-md bg-white shadow-lg">
                   <ul className="py-1">
-                    <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">
+                    <li className="block cursor-pointer px-4 py-2 text-gray-800 hover:bg-gray-200">
                       Profile
                     </li>
-                    <li className="block px-4 py-2 text-gray-800 hover:bg-gray-200 cursor-pointer">
+                    <li className="block cursor-pointer px-4 py-2 text-gray-800 hover:bg-gray-200">
                       Settings
                     </li>
-                    <li className="block px-4 py-2 text-white bg-red-500 hover:bg-red-600 cursor-pointer">
+                    <li className="block cursor-pointer bg-red-500 px-4 py-2 text-white hover:bg-red-600">
                       Log Out
                     </li>
                   </ul>
@@ -74,4 +74,4 @@ export function PrivateHeader() {
       </div>
     </header>
   );
-};
+}
