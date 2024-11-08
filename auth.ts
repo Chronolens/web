@@ -1,7 +1,6 @@
+import { login, refreshAccessToken } from "@/lib/network/network";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import DEFAULT_SERVER_ADDRESS from "@/lib/constants";
-import { login, refreshAccessToken } from "@/lib/network/network";
 
 class ServerError extends CredentialsSignin {
   code: "ServerError";
