@@ -2,75 +2,90 @@
 import { useEffect, useState } from "react";
 import { fetchLogs as fetchLogsFromNetwork } from "../../../lib/network/network";
 
-// Define the shape of the log objects
-interface Log {
-  id: string;
-  message: string;
-  level: string;
-  date: string;
-}
-
 export default function ActivityPage() {
-  const [logs, setLogs] = useState<Log[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [logs, setLogs] = useState([]); // State for logs data
+  const [currentPage, setCurrentPage] = useState(1); // State for pagination
+  const [totalPages, setTotalPages] = useState(1); // State to track total pages
 
-  // Renaming the local function to avoid naming conflict
-  const loadLogs = async () => {
-    try {
-      const fetched = await fetchLogsFromNetwork(1, 50); // Call the renamed imported function
-      const parsedLogs = JSON.parse(fetched);
+  useEffect(() => {
+    const fetchLogsData = async () => {
+      try {
+        const fetchedData = await fetchLogsFromNetwork(currentPage);
 
-      // Sort logs by date in descending order (most recent first)
-      parsedLogs.sort((a: Log, b: Log) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        const logsData = Array.isArray(fetchedData) ? fetchedData : fetchedData.logs || [];
+        const pagesCount = fetchedData.totalPages || 1; // Set a fallback for total pages
 
-      setLogs(parsedLogs);
-    } catch (error) {
-      console.error("Error fetching logs:", error);
-    } finally {
-      setLoading(false);
+        setLogs(logsData);
+        setTotalPages(pagesCount);
+      } catch (error) {
+        console.error("Error fetching logs:", error);
+      }
+    };
+
+    fetchLogsData();
+  }, [currentPage]);
+
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage);
     }
   };
 
-  useEffect(() => {
-    loadLogs();
-  }, []);
-
-  // Function to return the appropriate color for user_id based on log level
-  const getLevelColor = (level: string) => {
+  // Function to return the appropriate color for log level
+  const getLevelColor = (level) => {
     switch (level.toLowerCase()) {
-      case 'critical':
-        return 'text-red-500'; // Red for critical severity
-      case 'warning':
-        return 'text-yellow-500'; // Yellow for warning severity
-      case 'info':
-        return 'text-green-500'; // Green for info severity
+      case "critical":
+        return "text-red-500"; // Red for critical severity
+      case "warning":
+        return "text-yellow-500"; // Yellow for warning severity
+      case "info":
+        return "text-green-500"; // Green for info severity
       default:
-        return 'text-gray-500'; // Default gray for other severities
+        return "text-gray-500"; // Default gray for other severities
     }
+  };
+
+  // Format timestamp to readable date
+  const formatDate = (timestamp) => {
+    return new Date(timestamp).toLocaleString();
   };
 
   return (
-    <div className="min-h-screen h-full w-full flex flex-col">
-      <h1 className="text-xl font-semibold p-4">Activity Logs</h1>
-      {loading ? (
-        <p className="p-4">Loading logs...</p>
-      ) : logs.length > 0 ? (
-        <div className="flex-1">
-          <ul className="space-y-4">
-            {logs.map((log) => (
-              <li key={log.id} className="p-4 border-b border-gray-200 hover:bg-gray-100">
-                <div className="font-medium text-gray-700">
-                  <span className={getLevelColor(log.level)}>[ {log.level} ]</span> -{" "}
-                  <span>{log.message}</span> on{" "}
-                  <span className="text-gray-400">{log.date}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p className="p-4">No logs available</p>
-      )}
+    <div>
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-center space-x-4 mb-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
+      {/* Logs List */}
+      <ul className="space-y-2">
+        {logs.map((log) => (
+          <li key={log.id} className="flex items-center space-x-2">
+            <span className={`${getLevelColor(log.level)} font-bold`}>
+              [{log.level}]
+            </span>
+            <span className="text-gray-700">{log.message}</span>
+            <span className="text-gray-500">
+              - {formatDate(log.date)}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

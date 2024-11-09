@@ -153,33 +153,23 @@ export async function uploadFileAPI(fileFormData: FormData) {
 export const fetchLogs = async (page: number) => {
   const serverAddress = getServerAdrress();
 
-  console.log(`${serverAddress}/logs?page=${page}&page_size=50`);
-
   try {
-    const previewResponse = await fetchWithCookies(
-      `${serverAddress}/logs?page=1&page_size=10`,
+    const response = await fetchWithCookies(
+      `${serverAddress}/logs?page=${page}&page_size=25`,
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",
       },
     );
 
-    // Check if response is JSON
-    console.log("Response received:", previewResponse);
-
-    if (!previewResponse.ok) {
+    if (!response.ok) {
       throw new Error(`Failed to fetch logs; page: ${page}`);
     }
 
-    const contentType = previewResponse.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      const logs = await previewResponse.json();
-      return logs;
-    } else {
-      const text = await previewResponse.text();
-      console.error("Unexpected response format:", text);
-      throw new Error("Expected JSON response");
-    }
+    // Parse and return JSON directly
+    const logs = await response.json();
+    console.log("Logs fetched:", logs); // Check the logs array content
+    return logs;
   } catch (err) {
     console.error("Error fetching logs:", err);
     throw err;
