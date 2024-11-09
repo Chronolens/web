@@ -1,7 +1,6 @@
+import { login, refreshAccessToken } from "@/lib/network/network";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import API_URL from "./app/lib/constants";
-import { login } from "./app/lib/network/network";
 
 class ServerError extends CredentialsSignin {
   code: "ServerError";
@@ -26,7 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const loginData = await response.json();
           return loginData ?? null;
         } catch (e) {
-          console.log("something wrong with server address")
+          console.log("something wrong with server address");
           throw new ServerError();
         }
       },
@@ -42,21 +41,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           expiresAt: user.expires_at,
         };
       } else if (Date.now() < Number(token.expiresAt)) {
-        console.log("Token still valid");
         return token;
       } else {
         console.log("Token expired, trying to refresh");
         // Subsequent logins, but the `access_token` has expired, try to refresh it
-        if (!token.refresh_token) throw new TypeError("Missing refresh_token");
+        if (!token.refreshToken) throw new TypeError("Missing refresh_token");
         try {
-          const refreshResponse = await fetch(`${API_URL}/refresh`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              access_token: token.accessToken,
-              refresh_token: token.refreshToken,
-            }),
-          });
+          // FIX: change this to the network folder
+          const refreshResponse = await refreshAccessToken(token);
           const refreshResponseBody = await refreshResponse.json();
           if (!refreshResponse.ok) {
             console.error("Error refreshing access_token", refreshResponse);

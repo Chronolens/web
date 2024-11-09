@@ -1,28 +1,20 @@
-import Image from "next/image";
-import { SignUpButton } from "./SignUpButton";
 import { signIn } from "@/auth";
-import logo from "@/public/static/images/main-logo.png";
-import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
+import { MainLogo } from "./MainLogo";
+import { SignUpButton } from "./SignUpButton";
+import { StyledInput } from "./StyledInput";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default function LoginPage(props: {
   searchParams: { callbackUrl: string | undefined; error: string | undefined };
 }) {
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-t from-black to-purple-bg">
-      <div className="flex-col space-y-36 w-auto">
-        <Logo />
+    <div className=" w-screen h-screen flex items-center justify-center bg-gradient-primary">
+      <div className="flex-col w-auto">
+        <MainLogo />
         <LoginForm error={props.searchParams.error} />
       </div>
-    </div>
-  );
-}
-
-export function Logo() {
-  return (
-    <div className="w-[354px] items-center justify-center">
-      <Image src={logo} alt="" placeholder="blur" />
     </div>
   );
 }
@@ -47,14 +39,16 @@ async function handleFormAction(formData: FormData) {
   }
 }
 function LoginForm({ error }) {
+  const serverAddress = cookies().get("serverAddress")?.value;
   return (
-    <div className="flex w-full items-center justify-center">
+    <div className="flex w-full mt-36 items-center justify-center ">
       <div className="max-w-60">
         <form action={handleFormAction} className="space-y-6">
           <StyledInput
             id="serverAddress"
             name="serverAddress"
             placeholder="Server Address"
+            defaultValue={serverAddress}
             type="text"
             autoComplete="url"
           />
@@ -99,19 +93,5 @@ function LoginForm({ error }) {
         </form>
       </div>
     </div>
-  );
-}
-
-export function StyledInput(props) {
-  return (
-    <input
-      id={props.id}
-      name={props.name}
-      placeholder={props.placeholder}
-      type={props.type}
-      autoComplete={props.autoComplete}
-      required
-      className="block bg-transparent w-full transition duration-300 ease-in-out border-0 border-b border-gray-500 py-2 text-white focus:ring-0 focus:border-white focus:ease-in-out"
-    />
   );
 }

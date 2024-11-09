@@ -1,28 +1,29 @@
 "use client"; // Ensure this is a Client Component
 
 import { useRouter } from "next/navigation";
-import { Logo, StyledInput } from "../login/page"; // Import Logo from the login page
+import { MainLogo } from "../login/MainLogo";
+import { StyledInput } from "../login/StyledInput";
 // import { fetchSignUp } from "../lib/network/network";
 
 export default function SignUpPage() {
   const router = useRouter();
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-t from-black to-purple-bg">
-      <div className="flex-col space-y-36 w-auto">
-        <Logo /> {/* Use Logo here */}
+    <div className="h-screen w-screen flex items-center justify-center bg-gradient-primary">
+      <div className="flex-col w-auto">
+        <MainLogo />
         <SignUpForm />
       </div>
     </div>
   );
 }
 
-
 function SignUpForm() {
   const router = useRouter();
 
-  return ( // Add this line
-    <div className="flex w-full items-center justify-center">
+  return (
+    // Add this line
+    <div className="flex w-full items-center justify-center mt-36">
       <div className="max-w-60">
         <form
           action={async (formData: FormData) => {
@@ -100,3 +101,4 @@ function SignUpForm() {
     </div>
   );
 }
+

@@ -1,13 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
+import { fetchFullSyncData, fetchPreviewById } from "@/lib/network/network";
+import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { fetchPreviewById, fetchFullSyncData } from "../lib/network/network";
 
 export default function GalleryPage() {
   const [hashes, setHashes] = useState([]);
   const [pictures, setPictures] = useState([]);
 
-  const pageSize = 30;
+  const pageSize = 40;
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -51,7 +51,7 @@ export default function GalleryPage() {
   }, []);
 
   return (
-    <div id="scrollableDiv" className="flex-1 overflow-auto h-full w-screen">
+    <div id="scrollableDiv" className="h-full overflow-auto">
       <InfiniteScroll
         dataLength={pictures.length}
         scrollableTarget="scrollableDiv"
@@ -92,7 +92,7 @@ export default function GalleryPage() {
 // }
 //
 
-function PreviewDisplay({ key, picture }) {
+function PreviewDisplay({ picture }) {
   const [previewUrl, setPreviewUrl] = useState("");
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -108,17 +108,11 @@ function PreviewDisplay({ key, picture }) {
   }, []);
   return error ? (
     <img
-      key={key}
       src={"/static/images/image-placeholder.jpg"}
       alt={`Photo ID: ${picture.id}`}
-      className="object-cover max-w-80 h-52"
+      className="h-52 max-w-80 object-cover"
     />
   ) : (
-    <img
-      key={key}
-      src={previewUrl}
-      alt=""
-      className="object-cover max-w-80 h-52"
-    />
+    <img src={previewUrl} alt="" className="h-52 max-w-80 object-cover" />
   );
 }

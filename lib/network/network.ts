@@ -1,5 +1,4 @@
 "use server";
-
 import { auth } from "@/auth";
 import DEFAULT_SERVER_ADDRESS from "../constants";
 import { cookies } from "next/headers";
@@ -14,7 +13,7 @@ export async function fetchWithCookies(url: string, options: RequestInit) {
   return fetch(url, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...options.headers,
       Authorization: `Bearer ${session?.accessToken}`,
     },
   });
@@ -29,12 +28,28 @@ export async function login(credentials) {
   });
 }
 
+export async function refreshAccessToken(token) {
+  const serverAddress = getServerAdrress();
+  return fetch(`${serverAddress}/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      access_token: token.accessToken,
+      refresh_token: token.refreshToken,
+    }),
+  });
+}
+
 export const fetchFullSyncData = async () => {
   const serverAddress = getServerAdrress();
   try {
-    const fullSyncResponse = await fetchWithCookies(`${serverAddress}/sync/full`, {
-      method: "GET",
-    });
+    const fullSyncResponse = await fetchWithCookies(
+      `${serverAddress}/sync/full`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
 
     if (!fullSyncResponse.ok) {
       throw new Error("Failed to fetch /sync/full" + fullSyncResponse.status);
@@ -92,6 +107,7 @@ export const fetchPreviewById = async (photoId: string) => {
     const previewResponse = await fetchWithCookies(
       `${serverAddress}/preview/${photoId}`,
       {
+        headers: { "Content-Type": "application/json" },
         method: "GET",
       },
     );
@@ -107,3 +123,28 @@ export const fetchPreviewById = async (photoId: string) => {
     throw err;
   }
 };
+
+export async function uploadFileAPI(fileFormData: FormData) {
+  const serverAddress = getServerAdrress();
+  const file = fileFormData.get("file") as File;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const hash = await crypto.subtle.digest("SHA-1", arrayBuffer);
+  const b64Hash = btoa(String.fromCharCode(...new Uint8Array(hash)));
+
+  const uploadFormData = new FormData();
+  uploadFormData.set(b64Hash, file);
+  try {
+    const response = await fetchWithCookies(`${serverAddress}/image/upload`, {
+      method: "POST",
+      headers: {
+        Timestamp: file.lastModified.toString(),
+      },
+      body: uploadFormData,
+    });
+    return { ok: response.ok, status: response.status };
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw error;
+  }
+}
