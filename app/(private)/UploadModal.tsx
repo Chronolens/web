@@ -7,7 +7,9 @@ import {
 import { UploadModalContext } from "@/providers/uploadModalProvider";
 import Image from "next/image";
 import removeItemIcon from "@/public/static/icons/X.svg";
-import { useContext, useState } from "react";
+import retryItemIcon from "@/public/static/icons/ArrowCounterClockwise.svg";
+import addMoreIcon from "@/public/static/icons/Plus.svg";
+import { useContext } from "react";
 
 export default function UploadModal() {
   const { isUploadModalOpen, closeUploadModal } =
@@ -71,22 +73,14 @@ function DragAndDrop() {
             <h2 className="ml-8 text-lg">Selected Files</h2>
             <button
               onClick={triggerFileInput}
-              className="ml-auto mr-8 bg-foreground text-background rounded-lg px-6 py-2"
+              className="flex flex-row ml-auto mr-8 bg-foreground text-background rounded-lg px-4 py-2"
             >
-              Add More
+              <span >Add More</span>
+              <Image className="ml-1 invert" src={addMoreIcon} alt="" />
             </button>
           </div>
-          <div className="h-[700px] overflow-scroll">
+          <div className="h-[720px] px-10 overflow-scroll">
             <table className="w-full table-fixed">
-              <thead>
-                <tr>
-                  <th className="w-1/6 pb-4">Preview</th>
-                  <th className="w-2/6 pb-4">Name</th>
-                  <th className="w-1/6 pb-4">Size</th>
-                  <th className="w-1/6 pb-4">Status</th>
-                  <th className="w-1/6 pb-4">Actions</th>
-                </tr>
-              </thead>
               <tbody>
                 {files.map((file, index) => (
                   <UploadFileListItem key={index} index={index} file={file} />
@@ -106,6 +100,49 @@ function DragAndDrop() {
   );
 }
 
+function UploadFileListItem({
+  index,
+  file,
+}: {
+  index: number;
+  file: UploadFile;
+}) {
+  const { removeFile, retryUpload } = useUploadFilesContext();
+  return (
+    <tr>
+      <td className="w-1/12 py-3">
+        <Image src={file.url} alt="" height={64} width={64} />
+      </td>
+      <td className="w-5/12 pl-4 py-3 truncate">
+        <span>{file.name} </span>
+      </td>
+      <td className="w-2/12 py-3">
+        <div className="flex justify-center items-center">
+          <span>{file.sizeString}</span>
+        </div>
+      </td>
+      <td className="w-3/12 py-3">
+        <div className="flex justify-center items-center">
+          <FileStatus status={file.status} />
+        </div>
+      </td>
+      <td className="w-1/12 py-3">
+        <div className="flex justify-center items-center">
+          {file.status === UploadFileStatus.ERROR ? (
+            <button onClick={() => retryUpload(index)}>
+              <Image src={retryItemIcon} alt="Retry Icon" />
+            </button>
+          ) : (
+            <button onClick={() => removeFile(index)}>
+              <Image src={removeItemIcon} alt="Remove Icon" />
+            </button>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 function FileStatus({ status }: { status: UploadFileStatus }) {
   switch (status) {
     case UploadFileStatus.IDLE:
@@ -114,48 +151,13 @@ function FileStatus({ status }: { status: UploadFileStatus }) {
       return <span className="text-blue-light"> Uploading... </span>;
     case UploadFileStatus.UPLOADED:
       return <span className="text-green-light"> Uploaded </span>;
+    case UploadFileStatus.ALREADY_EXISTS:
+      return <span className="text-green-light"> Already Uploaded </span>;
     case UploadFileStatus.ERROR:
       return <span className="text-red-light"> Failed to Upload </span>;
     default:
       return <span className="text-red-light"> Status not supported </span>;
   }
-}
-
-function UploadFileListItem({
-  index,
-  file,
-}: {
-  index: number;
-  file: UploadFile;
-}) {
-  const { removeFile } = useUploadFilesContext();
-  return (
-    <tr>
-      <td>
-        <div className="flex justify-center items-center">
-          <Image src={file.url} alt="" width={64} height={64} />
-        </div>
-      </td>
-      <td>{file.name}</td>
-      <td>
-        <div className="flex justify-center items-center">
-          <span>{file.size}</span>
-        </div>
-      </td>
-      <td>
-        <div className="flex justify-center items-center">
-          <FileStatus status={file.status} />
-        </div>
-      </td>
-      <td>
-        <div className="flex justify-center items-center">
-          <button onClick={() => removeFile(index)}>
-            <Image src={removeItemIcon} alt="Remove Icon" />
-          </button>
-        </div>
-      </td>
-    </tr>
-  );
 }
 
 function UploadButton() {
