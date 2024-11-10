@@ -6,8 +6,9 @@ import InfiniteScroll from "react-infinite-scroll-component";
 export default function GalleryPage() {
   const [previews, setPictures] = useState([]);
   const containerRef = useRef(null);
+  const initialLoad = useRef(true);
 
-  const pageSize = 20;
+  const pageSize = 30;
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -24,26 +25,23 @@ export default function GalleryPage() {
       console.error(error);
     }
   };
-
   useEffect(() => {
-    // if (containerRef.current) {
-    //   const {clientHeight, scrollHeight} = containerRef.current;
-    //   console.log("clientHeight", clientHeight);
-    //   console.log("scrollHeight", scrollHeight);
-    //   if (scrollHeight <= clientHeight) {
-        fetchMorePics(); // Fetch more if container is shorter than viewport
-      // }
-    // }
+    const fetchInitialData = async () => {
+      await fetchMorePics();
+    };
+    if (initialLoad.current) {
+      fetchInitialData();
+      initialLoad.current = false;
+    }
   }, []);
-
   return (
     <div id="scrollableDiv" ref={containerRef} className="h-full overflow-auto">
       <InfiniteScroll
         dataLength={previews.length}
-        scrollableTarget="scrollableDiv"
         next={fetchMorePics}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
+        scrollableTarget="scrollableDiv"
       >
         <div className="flex flex-wrap gap-1">
           {previews.map((preview, index) => (
