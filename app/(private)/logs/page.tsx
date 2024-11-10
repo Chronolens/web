@@ -1,34 +1,49 @@
 "use client";
 import { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchLogs as fetchLogsFromNetwork } from "../../../lib/network/network";
 
 export default function ActivityPage() {
   const [logs, setLogs] = useState([]); // State for logs data
-  const [currentPage, setCurrentPage] = useState(1); // State for pagination
-  const [totalPages, setTotalPages] = useState(1); // State to track total pages
+  const [currentPage, setCurrentPage] = useState(2); // State for pagination
+  const [hasMore, setHasMore] = useState(true); // Tracks if more data is available
 
+  // Fetch initial data on component mount
   useEffect(() => {
-    const fetchLogsData = async () => {
-      try {
-        const fetchedData = await fetchLogsFromNetwork(currentPage);
+    fetchInitial();
+  }, []);
 
+  const fetchInitial = async () => {
+    console.log(currentPage, " | ", logs); // Log before fetching initial data
+    try {
+      const fetchedData = await fetchLogsFromNetwork(1);
+      if (fetchedData.length !== 0) { // Fixed the typo here (from 'lenght' to 'length')
         const logsData = Array.isArray(fetchedData) ? fetchedData : fetchedData.logs || [];
-        const pagesCount = fetchedData.totalPages || 1; // Set a fallback for total pages
-
+        const sortedLogs = logsData.sort((a, b) => new Date(b.date) - new Date(a.date));
         setLogs(logsData);
-        setTotalPages(pagesCount);
-      } catch (error) {
-        console.error("Error fetching logs:", error);
+      } else {
+        setHasMore(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+    }
+  };
 
-    fetchLogsData();
-  }, [currentPage]);
+  const fetchLogsData = async () => {
+    console.log("2) Fetching logs... Current page:", currentPage); // Log when fetching logs
+    try {
+      const fetchedData = await fetchLogsFromNetwork(currentPage);
+      const logsData = Array.isArray(fetchedData) ? fetchedData : fetchedData.logs || [];
 
-  // Handle page change
-  const handlePageChange = (newPage) => {
-    if (newPage > 0 && newPage <= totalPages) {
-      setCurrentPage(newPage);
+      if (logsData.length === 0) {
+        setHasMore(false);
+      } else {
+        const sortedLogs = logsData.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sorting logs
+        await setLogs((prevLogs) => [...prevLogs, ...sortedLogs]);
+        await setCurrentPage((prevPage) => prevPage + 1);
+      }
+    } catch (error) {
+      console.error("Error fetching logs:", error);
     }
   };
 
@@ -36,56 +51,51 @@ export default function ActivityPage() {
   const getLevelColor = (level) => {
     switch (level.toLowerCase()) {
       case "critical":
-        return "text-red-500"; // Red for critical severity
+        return "text-red-500";
       case "warning":
-        return "text-yellow-500"; // Yellow for warning severity
+        return "text-yellow-500";
       case "info":
-        return "text-green-500"; // Green for info severity
+        return "text-green-500";
       default:
-        return "text-gray-500"; // Default gray for other severities
+        return "text-gray-500";
     }
   };
 
-  // Format timestamp to readable date
   const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleString();
   };
 
+  // Log the updated logs whenever it changes
+  useEffect(() => {
+    const sortedLogs = logs.sort((a, b) => new Date(b.date) - new Date(a.date));
+    setLogs(sortedLogs)
+    console.log("Logs updated: ", logs); // Log after logs change
+  }, [logs]); // This hook runs whenever 'logs' changes
+
   return (
     <div>
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-center space-x-4 mb-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span>Page {currentPage} of {totalPages}</span>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-
-      {/* Logs List */}
-      <ul className="space-y-2">
-        {logs.map((log) => (
-          <li key={log.id} className="flex items-center space-x-2">
-            <span className={`${getLevelColor(log.level)} font-bold`}>
-              [{log.level}]
-            </span>
-            <span className="text-gray-700">{log.message}</span>
-            <span className="text-gray-500">
-              - {formatDate(log.date)}
-            </span>
-          </li>
-        ))}
-      </ul>
+      <h1>Activity Page</h1>
+      <InfiniteScroll
+        dataLength={logs.length}
+        next={fetchLogsData}
+        hasMore={hasMore}
+        loader={<h4>Loading more logs...</h4>}
+        endMessage={<p>No more logs to display.</p>}
+      >
+        <ul className="space-y-2">
+          {logs.map((log) => (
+            <li key={log.id} className="flex items-center space-x-2 ml-4">
+              <span className={`${getLevelColor(log.level)} font-bold`}>
+                [{log.level}]
+              </span>
+              <span className="text-gray-700">{log.message}</span>
+              <span className="text-gray-500">
+                - {formatDate(log.date)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </InfiniteScroll>
     </div>
   );
 }

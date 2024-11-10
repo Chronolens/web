@@ -155,7 +155,7 @@ export const fetchLogs = async (page: number) => {
 
   try {
     const response = await fetchWithCookies(
-      `${serverAddress}/logs?page=${page}&page_size=25`,
+      `${serverAddress}/logs?page=${page}&page_size=2`,
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",
