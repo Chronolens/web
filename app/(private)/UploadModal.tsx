@@ -9,7 +9,7 @@ import Image from "next/image";
 import removeItemIcon from "@/public/static/icons/X.svg";
 import retryItemIcon from "@/public/static/icons/ArrowCounterClockwise.svg";
 import addMoreIcon from "@/public/static/icons/Plus.svg";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 export default function UploadModal() {
   const { isUploadModalOpen, closeUploadModal } =
@@ -56,17 +56,32 @@ const triggerFileInput = () => {
 
 function DragAndDrop() {
   const { files, addFiles } = useUploadFilesContext();
+  const [isDragging, setIsDragging] = useState(false);
+
   const handleDrop = (e) => {
     e.preventDefault();
-    setIsDragging(false);
     const files = e.dataTransfer.files;
     // TODO: add a mime type check
     if (files.length) {
       addFiles(files);
     }
   };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div onDrop={handleDrop} className="flex-1">
+    <div
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      className="flex-1"
+    >
       {files.length != 0 ? (
         <div>
           <div className="flex items-center h-20">
@@ -75,7 +90,7 @@ function DragAndDrop() {
               onClick={triggerFileInput}
               className="flex flex-row ml-auto mr-8 bg-foreground text-background rounded-lg px-4 py-2"
             >
-              <span >Add More</span>
+              <span>Add More</span>
               <Image className="ml-1 invert" src={addMoreIcon} alt="" />
             </button>
           </div>

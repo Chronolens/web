@@ -17,7 +17,7 @@ export default function PrivateLayout({
           <SideBar />
           <div className="flex flex-col w-screen overflow-hidden">
             <PrivateHeader />
-            <main className="grow overflow-auto">{children}</main>
+            <main className="h-full overflow-auto">{children}</main>
           </div>
           <UploadModal />
         </section>
