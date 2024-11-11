@@ -1,56 +1,19 @@
-"use client";
-import { useEffect, useState } from "react";
+"use client"
+
+import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { fetchLogs as fetchLogsFromNetwork } from "../../../lib/network/network";
+import { fetchLogs } from "@/lib/network/network";
 
-export default function ActivityPage() {
-  const [logs, setLogs] = useState([]); // State for logs data
-  const [currentPage, setCurrentPage] = useState(2); // State for pagination
-  const [hasMore, setHasMore] = useState(true); // Tracks if more data is available
-
-  // Fetch initial data on component mount
-  useEffect(() => {
-    fetchInitial();
-  }, []);
-
-  const fetchInitial = async () => {
-    console.log(currentPage, " | ", logs); // Log before fetching initial data
-    try {
-      const fetchedData = await fetchLogsFromNetwork(1);
-      if (fetchedData.length !== 0) { // Fixed the typo here (from 'lenght' to 'length')
-        const logsData = Array.isArray(fetchedData) ? fetchedData : fetchedData.logs || [];
-        const sortedLogs = logsData.sort((a, b) => new Date(b.date) - new Date(a.date));
-        setLogs(logsData);
-      } else {
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.error("Error fetching logs:", error);
-    }
-  };
-
-  const fetchLogsData = async () => {
-    console.log("2) Fetching logs... Current page:", currentPage); // Log when fetching logs
-    try {
-      const fetchedData = await fetchLogsFromNetwork(currentPage);
-      const logsData = Array.isArray(fetchedData) ? fetchedData : fetchedData.logs || [];
-
-      if (logsData.length === 0) {
-        setHasMore(false);
-      } else {
-        const sortedLogs = logsData.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sorting logs
-        await setLogs((prevLogs) => [...prevLogs, ...sortedLogs]);
-        await setCurrentPage((prevPage) => prevPage + 1);
-      }
-    } catch (error) {
-      console.error("Error fetching logs:", error);
-    }
-  };
+const InfiniteScrollExample1 = () => {
+  const [items, setItems] = useState([]); // Ensure this is an array initially
+  const [hasMore, setHasMore] = useState(true);
+  const [index, setIndex] = useState(2);
+  const [pageSize, setPageSize] = useState(15);
 
   // Function to return the appropriate color for log level
-  const getLevelColor = (level) => {
+  const getLevelColor = (level: string) => {
     switch (level.toLowerCase()) {
-      case "critical":
+      case "error":
         return "text-red-500";
       case "warning":
         return "text-yellow-500";
@@ -61,41 +24,50 @@ export default function ActivityPage() {
     }
   };
 
-  const formatDate = (timestamp) => {
+  const formatDate = (timestamp: string | Date) => {
     return new Date(timestamp).toLocaleString();
   };
 
-  // Log the updated logs whenever it changes
   useEffect(() => {
-    const sortedLogs = logs.sort((a, b) => new Date(b.date) - new Date(a.date));
-    setLogs(sortedLogs)
-    console.log("Logs updated: ", logs); // Log after logs change
-  }, [logs]); // This hook runs whenever 'logs' changes
+    fetchMoreData();
+  }, []);
+
+  const fetchMoreData = () => {
+    fetchLogs(index, pageSize).then((res) => {
+      console.log("Fetched more logs:", res); // Log the full response to check the structure
+      if (Array.isArray(res)) {
+        setItems((prevItems) => [...prevItems, ...res]);
+        res.length < pageSize ? setHasMore(false) : setHasMore(true);
+        setIndex((prevIndex) => prevIndex + 1);
+      } else {
+        console.error("Response data is not an array", res);
+      }
+    })
+    .catch((err) => console.log(err));
+  };
 
   return (
-    <div>
-      <h1>Activity Page</h1>
-      <InfiniteScroll
-        dataLength={logs.length}
-        next={fetchLogsData}
-        hasMore={hasMore}
-        loader={<h4>Loading more logs...</h4>}
-        endMessage={<p>No more logs to display.</p>}
-      >
-        <ul className="space-y-2">
-          {logs.map((log) => (
-            <li key={log.id} className="flex items-center space-x-2 ml-4">
-              <span className={`${getLevelColor(log.level)} font-bold`}>
-                [{log.level}]
-              </span>
-              <span className="text-gray-700">{log.message}</span>
-              <span className="text-gray-500">
-                - {formatDate(log.date)}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </InfiniteScroll>
-    </div>
+    <InfiniteScroll
+      dataLength={items.length}
+      next={fetchMoreData}
+      hasMore={hasMore}
+      loader={<h4>Loading more logs...</h4>}
+      endMessage={<p>No more logs to display.</p>}
+      scrollThreshold={0.95}
+    >
+      <ul className="space-y-2">
+        {items && items.map((log) => (
+          <li key={log.id} className="flex items-center space-x-2 ml-4 mb-2">
+            <span className={`${getLevelColor(log.level)} font-bold`}>
+              [{log.level}]
+            </span>
+            <span className="text-gray-700">{log.message}</span>
+            <span className="text-gray-500">- {formatDate(log.date)}</span>
+          </li>
+        ))}
+      </ul>
+    </InfiniteScroll>
   );
-}
+};
+
+export default InfiniteScrollExample1;

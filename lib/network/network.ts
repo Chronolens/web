@@ -150,12 +150,12 @@ export async function uploadFileAPI(fileFormData: FormData) {
 }
 
 // Function to fetch 50 logs
-export const fetchLogs = async (page: number) => {
+export const fetchLogs = async (page: number, pageSize:number) => {
   const serverAddress = getServerAdrress();
 
   try {
     const response = await fetchWithCookies(
-      `${serverAddress}/logs?page=${page}&page_size=2`,
+      `${serverAddress}/logs?page=${page}&page_size=${pageSize}`,
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",
