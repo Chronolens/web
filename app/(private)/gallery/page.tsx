@@ -77,5 +77,13 @@ export default function GalleryPage() {
 //
 
 function PreviewDisplay({ preview }) {
-  return <img src={preview} />;
+  const [error, setError] = useState(false);
+  return (
+    <img
+      className="object-cover h-[200px] min-w-[130px] max-w-96"
+      src={!error ? preview : "/static/images/image-placeholder.jpg"}
+      alt=""
+      onError={() => setError(true)}
+    />
+  );
 }
