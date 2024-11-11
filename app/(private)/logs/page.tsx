@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+import React, { useState, useEffect, useRef } from "react";
 import { fetchLogs } from "@/lib/network/network";
 
 const InfiniteScrollExample1 = () => {
-  const [items, setItems] = useState([]); // Ensure this is an array initially
+  const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  const [index, setIndex] = useState(2);
-  const [pageSize, setPageSize] = useState(15);
+  const [loading, setLoading] = useState(false); // Track loading state
+  const pageSize = 5;
+  const indexRef = useRef(1);
+  const loaderRef = useRef(null);
 
-  // Function to return the appropriate color for log level
-  const getLevelColor = (level: string) => {
+  const getLevelColor = (level) => {
     switch (level.toLowerCase()) {
       case "error":
         return "text-red-500";
@@ -24,39 +24,63 @@ const InfiniteScrollExample1 = () => {
     }
   };
 
-  const formatDate = (timestamp: string | Date) => {
+  const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleString();
   };
 
-  useEffect(() => {
-    fetchMoreData();
-  }, []);
-
   const fetchMoreData = () => {
-    fetchLogs(index, pageSize).then((res) => {
-      console.log("Fetched more logs:", res); // Log the full response to check the structure
-      if (Array.isArray(res)) {
-        setItems((prevItems) => [...prevItems, ...res]);
-        res.length < pageSize ? setHasMore(false) : setHasMore(true);
-        setIndex((prevIndex) => prevIndex + 1);
-      } else {
-        console.error("Response data is not an array", res);
-      }
-    })
-    .catch((err) => console.log(err));
+    if (loading || !hasMore) return; // Skip fetch if already loading or no more data
+  
+    setLoading(true); // Set loading to true while fetching
+    fetchLogs(indexRef.current, pageSize)
+      .then((res) => {
+        if (Array.isArray(res)) {
+          // Remove duplicates by filtering out already existing items
+          setItems((prevItems) => {
+            const uniqueItems = [...new Set([...prevItems, ...res])];
+            return uniqueItems;
+          });
+  
+          // If the returned response length is less than the pageSize, set hasMore to false
+          if (res.length < pageSize) {
+            setHasMore(false);
+          }
+          indexRef.current += 1; // Increment indexRef for the next fetch
+        } else {
+          console.error("Response data is not an array", res);
+        }
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false)); // Set loading to false after fetching
   };
 
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          fetchMoreData();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => {
+      if (loaderRef.current) {
+        observer.unobserve(loaderRef.current);
+      }
+    };
+  }, [hasMore, loading]);
+
   return (
-    <InfiniteScroll
-      dataLength={items.length}
-      next={fetchMoreData}
-      hasMore={hasMore}
-      loader={<h4>Loading more logs...</h4>}
-      endMessage={<p>No more logs to display.</p>}
-      scrollThreshold={0.95}
-    >
+    <div className="space-y-2">
       <ul className="space-y-2">
-        {items && items.map((log) => (
+        {/* Reverse the order of items to display the most recent logs first */}
+        {items.slice().map((log) => (
           <li key={log.id} className="flex items-center space-x-2 ml-4 mb-2">
             <span className={`${getLevelColor(log.level)} font-bold`}>
               [{log.level}]
@@ -66,7 +90,15 @@ const InfiniteScrollExample1 = () => {
           </li>
         ))}
       </ul>
-    </InfiniteScroll>
+
+      {hasMore ? (
+        <div ref={loaderRef} className="text-center text-gray-500 py-4">
+          Loading more logs...
+        </div>
+      ) : (
+        <p className="text-center text-gray-500 py-4">No more logs to display.</p>
+      )}
+    </div>
   );
 };
 
