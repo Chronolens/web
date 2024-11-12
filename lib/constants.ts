@@ -1,3 +1,3 @@
-const DEFAULT_SERVER_ADDRESS = "http://10.0.0.50:8090";
+const DEFAULT_SERVER_ADDRESS = "https://chronolens.francof.net";
 
 export default DEFAULT_SERVER_ADDRESS;
