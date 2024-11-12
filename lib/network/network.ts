@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import DEFAULT_SERVER_ADDRESS from "../constants";
 import { cookies } from "next/headers";
 
+
 function getServerAdrress(): string {
   const serverAddress = cookies().get("serverAddress")?.value;
   return serverAddress ? serverAddress : DEFAULT_SERVER_ADDRESS;
@@ -10,6 +11,9 @@ function getServerAdrress(): string {
 
 export async function fetchWithCookies(url: string, options: RequestInit) {
   const session = await auth();
+  if (session){
+    addRoutingTempLogEntry(url);
+  }
   return fetch(url, {
     ...options,
     headers: {
@@ -175,3 +179,32 @@ export const fetchLogs = async (page: number, pageSize:number) => {
     throw err;
   }
 };
+
+
+export async function addRoutingTempLogEntry(url: string) {
+  const routeHistoryCookie = cookies().get("routeHistory");
+  let routeHistory = routeHistoryCookie ? JSON.parse(routeHistoryCookie.value) : [];
+
+  const newEntry = {
+    level: "info",
+    message: `Request made to ${url}`,
+    date: new Date().toISOString(),
+  };
+
+  // Add the new entry to the route history array
+  routeHistory.push(newEntry);
+
+  // Save updated route history back to cookies
+  cookies().set("routeHistory", JSON.stringify(routeHistory), {
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production", // Enabling secure cookies for production environment
+  });
+}
+
+export async function getSessionLogs() {
+  const routeHistoryCookie = cookies().get("routeHistory");
+  if (!routeHistoryCookie) {
+    return []; // No route history cookie found
+  }
+  return JSON.parse(routeHistoryCookie.value); // Return the route history array directly
+}

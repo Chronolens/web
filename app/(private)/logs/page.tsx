@@ -2,11 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { fetchLogs } from "@/lib/network/network";
+import Cookies from 'js-cookie';
 
 const InfiniteScrollExample1 = () => {
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false); // Track loading state
+  const [routeHistory, setRouteHistory] = useState([]);
+
   const pageSize = 5;
   const indexRef = useRef(1);
   const loaderRef = useRef(null);
@@ -30,7 +33,7 @@ const InfiniteScrollExample1 = () => {
 
   const fetchMoreData = () => {
     if (loading || !hasMore) return; // Skip fetch if already loading or no more data
-  
+
     setLoading(true); // Set loading to true while fetching
     fetchLogs(indexRef.current, pageSize)
       .then((res) => {
@@ -40,12 +43,14 @@ const InfiniteScrollExample1 = () => {
             const uniqueItems = [...new Set([...prevItems, ...res])];
             return uniqueItems;
           });
-  
+
           // If the returned response length is less than the pageSize, set hasMore to false
           if (res.length < pageSize) {
             setHasMore(false);
           }
           indexRef.current += 1; // Increment indexRef for the next fetch
+
+          console.log(routeHistory);
         } else {
           console.error("Response data is not an array", res);
         }
@@ -54,8 +59,13 @@ const InfiniteScrollExample1 = () => {
       .finally(() => setLoading(false)); // Set loading to false after fetching
   };
 
-
   useEffect(() => {
+    // Retrieve routeHistory from cookies on mount
+    const actions = Cookies.get('routeHistory')
+      ? JSON.parse(Cookies.get('routeHistory'))
+      : [];
+    setRouteHistory(actions);
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !loading) {
@@ -77,9 +87,28 @@ const InfiniteScrollExample1 = () => {
   }, [hasMore, loading]);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <h2 className="text-xl font-bold">Route History</h2>
+        <ul className="space-y-2">
+          {routeHistory.length > 0 ? (
+            routeHistory.map((entry, index) => (
+              <li key={index} className="flex items-center space-x-2 ml-4 mb-2">
+                <span className={`${getLevelColor(entry.level)} font-bold`}>
+                  [{entry.level}]
+                </span>
+                <span className="text-gray-700">{entry.message}</span>
+                <span className="text-gray-500">- {formatDate(entry.date)}</span>
+              </li>
+            ))
+          ) : (
+            <p className="text-gray-500">No route history available.</p>
+          )}
+        </ul>
+      </div>
+
+      <h2 className="text-xl font-bold">Log Data</h2>
       <ul className="space-y-2">
-        {/* Reverse the order of items to display the most recent logs first */}
         {items.slice().map((log) => (
           <li key={log.id} className="flex items-center space-x-2 ml-4 mb-2">
             <span className={`${getLevelColor(log.level)} font-bold`}>
