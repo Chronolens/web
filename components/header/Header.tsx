@@ -4,6 +4,7 @@ import uploadIcon from "@/public/static/icons/CloudArrowUp.svg";
 import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
 import { HeaderSearchBar } from "./HeaderSearchBar";
+import { signOut } from "next-auth/react";
 
 export function PrivateHeader() {
   const [menuOpen, setMenuOpen] = useState(false); // State to control menu visibility
@@ -63,7 +64,9 @@ export function PrivateHeader() {
                       Settings
                     </li>
                     <li className="block cursor-pointer bg-red-500 px-4 py-2 text-white hover:bg-red-600">
-                      Log Out
+                      <button className="w-full" onClick={() => signOut()}>
+                        Log Out
+                      </button>
                     </li>
                   </ul>
                 </div>

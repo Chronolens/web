@@ -103,6 +103,31 @@ export const fetchPreviewsByHash = async (photoIds: string[]) => {
   }
 };
 
+export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
+  const serverAddress = getServerAdrress();
+  try {
+    // Fetch previews for each photo hash
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/previews?page=${page}&page_size=${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+        next: { revalidate: 0 },
+      },
+    );
+
+    if (!previewResponse.ok) {
+      throw new Error(`Failed to fetch preview for page: ${page}`);
+    }
+
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error("Error fetching preview data:", err);
+    throw err;
+  }
+};
+
 // Function to fetch preview URL for a single photo ID
 export const fetchPreviewById = async (photoId: string) => {
   const serverAddress = getServerAdrress();
