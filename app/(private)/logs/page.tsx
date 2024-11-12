@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { fetchLogs } from "@/lib/network/network";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const InfiniteScrollExample1 = () => {
   const [items, setItems] = useState([]);
@@ -10,7 +10,7 @@ const InfiniteScrollExample1 = () => {
   const [loading, setLoading] = useState(false); // Track loading state
   const [routeHistory, setRouteHistory] = useState([]);
 
-  const pageSize = 5;
+  const pageSize = 3;
   const indexRef = useRef(1);
   const loaderRef = useRef(null);
 
@@ -34,40 +34,40 @@ const InfiniteScrollExample1 = () => {
   const fetchMoreData = () => {
     if (loading || !hasMore) return; // Skip fetch if already loading or no more data
 
-  
     setLoading(true); // Set loading to true while fetching
     fetchLogs(indexRef.current, pageSize)
       .then((res) => {
         if (Array.isArray(res)) {
           // Step 1: Get maxDate and minDate from the fetched response
-          const dates = res.map(item => item.date);
+          const dates = res.map((item) => item.date);
           const maxDate = Math.max(...dates);
           const minDate = Math.min(...dates);
-  
+
           // Step 2: Filter routeHistory items by date range (minDate to maxDate)
           let filteredRouteHistory = [];
-          if (indexRef.current === 1) { // first page may have more recent requests made
+          if (indexRef.current === 1) {
+            // first page may have more recent requests made
             filteredRouteHistory = routeHistory.filter(
-              (entry) => entry.date <= maxDate && entry.date >= minDate
+              (entry) => entry.date <= maxDate && entry.date >= minDate,
             );
           } else {
-            if (res.length < pageSize) { // last page may have older requests made
+            if (res.length < pageSize) {
+              // last page may have older requests made
               filteredRouteHistory = routeHistory.filter(
-                (entry) => entry.date >= minDate
+                (entry) => entry.date >= minDate,
               );
             } else {
               filteredRouteHistory = routeHistory.filter(
-                (entry) => entry.date >= minDate && entry.date <= maxDate
+                (entry) => entry.date >= minDate && entry.date <= maxDate,
               );
             }
           }
-  
+
           // Step 3: Create itemsToDisplay by merging filteredRouteHistory and res
-          const itemsToDisplay = [
-            ...filteredRouteHistory,
-            ...res
-          ].sort((a, b) => b.date - a.date); // Sort by date in descending order
-  
+          const itemsToDisplay = [...filteredRouteHistory, ...res].sort(
+            (a, b) => b.date - a.date,
+          ); // Sort by date in descending order
+
           // Step 4: Update the items state with itemsToDisplay
           setItems((prevItems) => {
             const uniqueItems = [...new Set([...prevItems, ...itemsToDisplay])];
@@ -79,7 +79,7 @@ const InfiniteScrollExample1 = () => {
             setHasMore(false);
           }
           indexRef.current += 1; // Increment indexRef for the next fetch
-  
+
           console.log(routeHistory);
         } else {
           console.error("Response data is not an array", res);
@@ -91,8 +91,8 @@ const InfiniteScrollExample1 = () => {
 
   useEffect(() => {
     // Retrieve and sort routeHistory from cookies on mount
-    const actions = Cookies.get('routeHistory')
-      ? JSON.parse(Cookies.get('routeHistory')).sort((a, b) => b.date - a.date)
+    const actions = Cookies.get("routeHistory")
+      ? JSON.parse(Cookies.get("routeHistory")).sort((a, b) => b.date - a.date)
       : [];
     setRouteHistory(actions);
 
@@ -102,7 +102,7 @@ const InfiniteScrollExample1 = () => {
           fetchMoreData();
         }
       },
-      { threshold: 1.0 }
+      { threshold: 1.0 },
     );
 
     if (loaderRef.current) {
@@ -117,7 +117,7 @@ const InfiniteScrollExample1 = () => {
   }, [hasMore, loading]);
 
   return (
-    <div className="space-y-4">
+    <div className="overflow-auto">
       <div className="space-y-2">
         <h2 className="text-xl font-bold">Route History</h2>
         <ul className="space-y-2">
@@ -128,7 +128,9 @@ const InfiniteScrollExample1 = () => {
                   [{entry.level}]
                 </span>
                 <span className="text-gray-700">{entry.message}</span>
-                <span className="text-gray-500">- {formatDate(entry.date)}</span>
+                <span className="text-gray-500">
+                  - {formatDate(entry.date)}
+                </span>
               </li>
             ))
           ) : (
@@ -155,7 +157,9 @@ const InfiniteScrollExample1 = () => {
           Loading more logs...
         </div>
       ) : (
-        <p className="text-center text-gray-500 py-4">No more logs to display.</p>
+        <p className="text-center text-gray-500 py-4">
+          No more logs to display.
+        </p>
       )}
     </div>
   );
