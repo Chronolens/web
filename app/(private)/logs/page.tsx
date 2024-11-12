@@ -34,13 +34,43 @@ const InfiniteScrollExample1 = () => {
   const fetchMoreData = () => {
     if (loading || !hasMore) return; // Skip fetch if already loading or no more data
 
+  
     setLoading(true); // Set loading to true while fetching
     fetchLogs(indexRef.current, pageSize)
       .then((res) => {
         if (Array.isArray(res)) {
-          // Remove duplicates by filtering out already existing items
+          // Step 1: Get maxDate and minDate from the fetched response
+          const dates = res.map(item => item.date);
+          const maxDate = Math.max(...dates);
+          const minDate = Math.min(...dates);
+  
+          // Step 2: Filter routeHistory items by date range (minDate to maxDate)
+          let filteredRouteHistory = [];
+          if (indexRef.current === 1) { // first page may have more recent requests made
+            filteredRouteHistory = routeHistory.filter(
+              (entry) => entry.date <= maxDate && entry.date >= minDate
+            );
+          } else {
+            if (res.length < pageSize) { // last page may have older requests made
+              filteredRouteHistory = routeHistory.filter(
+                (entry) => entry.date >= minDate
+              );
+            } else {
+              filteredRouteHistory = routeHistory.filter(
+                (entry) => entry.date >= minDate && entry.date <= maxDate
+              );
+            }
+          }
+  
+          // Step 3: Create itemsToDisplay by merging filteredRouteHistory and res
+          const itemsToDisplay = [
+            ...filteredRouteHistory,
+            ...res
+          ].sort((a, b) => b.date - a.date); // Sort by date in descending order
+  
+          // Step 4: Update the items state with itemsToDisplay
           setItems((prevItems) => {
-            const uniqueItems = [...new Set([...prevItems, ...res])];
+            const uniqueItems = [...new Set([...prevItems, ...itemsToDisplay])];
             return uniqueItems;
           });
 
@@ -49,7 +79,7 @@ const InfiniteScrollExample1 = () => {
             setHasMore(false);
           }
           indexRef.current += 1; // Increment indexRef for the next fetch
-
+  
           console.log(routeHistory);
         } else {
           console.error("Response data is not an array", res);
@@ -60,9 +90,9 @@ const InfiniteScrollExample1 = () => {
   };
 
   useEffect(() => {
-    // Retrieve routeHistory from cookies on mount
+    // Retrieve and sort routeHistory from cookies on mount
     const actions = Cookies.get('routeHistory')
-      ? JSON.parse(Cookies.get('routeHistory'))
+      ? JSON.parse(Cookies.get('routeHistory')).sort((a, b) => b.date - a.date)
       : [];
     setRouteHistory(actions);
 
