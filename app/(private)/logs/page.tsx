@@ -7,8 +7,9 @@ import Cookies from "js-cookie";
 const InfiniteScrollExample1 = () => {
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false); // Track loading state
+  const [loading, setLoading] = useState(false);
   const [routeHistory, setRouteHistory] = useState([]);
+  const [displayType, setDisplayType] = useState("serverLogs");
 
   const pageSize = 3;
   const indexRef = useRef(1);
@@ -32,65 +33,55 @@ const InfiniteScrollExample1 = () => {
   };
 
   const fetchMoreData = () => {
-    if (loading || !hasMore) return; // Skip fetch if already loading or no more data
+    if (loading || !hasMore) return;
 
-    setLoading(true); // Set loading to true while fetching
+    setLoading(true);
     fetchLogs(indexRef.current, pageSize)
       .then((res) => {
         if (Array.isArray(res)) {
-          // Step 1: Get maxDate and minDate from the fetched response
           const dates = res.map((item) => item.date);
           const maxDate = Math.max(...dates);
           const minDate = Math.min(...dates);
 
-          // Step 2: Filter routeHistory items by date range (minDate to maxDate)
           let filteredRouteHistory = [];
           if (indexRef.current === 1) {
-            // first page may have more recent requests made
             filteredRouteHistory = routeHistory.filter(
-              (entry) => entry.date <= maxDate && entry.date >= minDate,
+              (entry) => entry.date <= maxDate && entry.date >= minDate
             );
           } else {
             if (res.length < pageSize) {
-              // last page may have older requests made
               filteredRouteHistory = routeHistory.filter(
-                (entry) => entry.date >= minDate,
+                (entry) => entry.date >= minDate
               );
             } else {
               filteredRouteHistory = routeHistory.filter(
-                (entry) => entry.date >= minDate && entry.date <= maxDate,
+                (entry) => entry.date >= minDate && entry.date <= maxDate
               );
             }
           }
 
-          // Step 3: Create itemsToDisplay by merging filteredRouteHistory and res
           const itemsToDisplay = [...filteredRouteHistory, ...res].sort(
-            (a, b) => b.date - a.date,
-          ); // Sort by date in descending order
+            (a, b) => b.date - a.date
+          );
 
-          // Step 4: Update the items state with itemsToDisplay
           setItems((prevItems) => {
             const uniqueItems = [...new Set([...prevItems, ...itemsToDisplay])];
             return uniqueItems;
           });
 
-          // If the returned response length is less than the pageSize, set hasMore to false
           if (res.length < pageSize) {
             setHasMore(false);
           }
-          indexRef.current += 1; // Increment indexRef for the next fetch
-
-          console.log(routeHistory);
+          indexRef.current += 1;
         } else {
           console.error("Response data is not an array", res);
         }
       })
       .catch((err) => console.log(err))
-      .finally(() => setLoading(false)); // Set loading to false after fetching
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    // Retrieve and sort routeHistory from cookies on mount
     const actions = Cookies.get("routeHistory")
       ? JSON.parse(Cookies.get("routeHistory")).sort((a, b) => b.date - a.date)
       : [];
@@ -102,7 +93,7 @@ const InfiniteScrollExample1 = () => {
           fetchMoreData();
         }
       },
-      { threshold: 1.0 },
+      { threshold: 1.0 }
     );
 
     if (loaderRef.current) {
@@ -117,50 +108,78 @@ const InfiniteScrollExample1 = () => {
   }, [hasMore, loading]);
 
   return (
-    <div className="overflow-auto">
-      <div className="space-y-2">
-        <h2 className="text-xl font-bold">Route History</h2>
-        <ul className="space-y-2">
-          {routeHistory.length > 0 ? (
-            routeHistory.map((entry, index) => (
-              <li key={index} className="flex items-center space-x-2 ml-4 mb-2">
-                <span className={`${getLevelColor(entry.level)} font-bold`}>
-                  [{entry.level}]
-                </span>
-                <span className="text-gray-700">{entry.message}</span>
-                <span className="text-gray-500">
-                  - {formatDate(entry.date)}
-                </span>
-              </li>
-            ))
-          ) : (
-            <p className="text-gray-500">No route history available.</p>
-          )}
-        </ul>
+    <div className="h-screen flex flex-col">
+      <div className="flex space-x-4 p-4">
+        <button
+          onClick={() => setDisplayType("sessionLogs")}
+          className={`px-4 py-2 font-bold ${
+            displayType === "sessionLogs" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"
+          }`}
+        >
+          Session Logs
+        </button>
+        <button
+          onClick={() => setDisplayType("serverLogs")}
+          className={`px-4 py-2 font-bold ${
+            displayType === "serverLogs" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"
+          }`}
+        >
+          Server Logs
+        </button>
       </div>
 
-      <h2 className="text-xl font-bold">Log Data</h2>
-      <ul className="space-y-2">
-        {items.slice().map((log) => (
-          <li key={log.id} className="flex items-center space-x-2 ml-4 mb-2">
-            <span className={`${getLevelColor(log.level)} font-bold`}>
-              [{log.level}]
-            </span>
-            <span className="text-gray-700">{log.message}</span>
-            <span className="text-gray-500">- {formatDate(log.date)}</span>
-          </li>
-        ))}
-      </ul>
+      <div className="flex-grow overflow-y-auto p-4">
+        {displayType === "sessionLogs" && (
+          <div className="space-y-2">
+            <div className="max-h-full overflow-y-auto">
+              <ul className="space-y-2">
+                {routeHistory.length > 0 ? (
+                  routeHistory.map((entry, index) => (
+                    <li key={index} className="flex items-center space-x-2 ml-4 mb-2">
+                      <span className={`${getLevelColor(entry.level)} font-bold`}>
+                        [{entry.level}]
+                      </span>
+                      <span className="text-gray-700">{entry.message}</span>
+                      <span className="text-gray-500">- {formatDate(entry.date)}</span>
+                    </li>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No route history available.</p>
+                )}
+              </ul>
+            </div>
+          </div>
+        )}
 
-      {hasMore ? (
-        <div ref={loaderRef} className="text-center text-gray-500 py-4">
-          Loading more logs...
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 py-4">
-          No more logs to display.
-        </p>
-      )}
+        {displayType === "serverLogs" && (
+          <div className="space-y-2">
+            <div className="max-h-full overflow-y-auto">
+              <ul className="space-y-2">
+                {items.slice().map((log) => (
+                  <li key={log.id} className="flex items-center space-x-2 ml-4 mb-2">
+                    <span className={`${getLevelColor(log.level)} font-bold`}>
+                      [{log.level}]
+                    </span>
+                    <span className="text-gray-700">{log.message}</span>
+                    <span className="text-gray-500">- {formatDate(log.date)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {displayType === "serverLogs" && hasMore && (
+          <div ref={loaderRef} className="text-center text-gray-500 py-4">
+            Loading more logs...
+          </div>
+        )}
+        {!hasMore && displayType === "serverLogs" && (
+          <p className="text-center text-gray-500 py-4">
+            No more logs to display.
+          </p>
+        )}
+      </div>
     </div>
   );
 };
