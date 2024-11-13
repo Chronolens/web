@@ -12,7 +12,7 @@ function getServerAdrress(): string {
 export async function fetchWithCookies(url: string, options: RequestInit) {
   const session = await auth();
   if (session){
-    addRoutingTempLogEntry(url);
+    addRoutingTempLogEntry(url, "info");
   }
   return fetch(url, {
     ...options,
@@ -56,6 +56,7 @@ export const fetchFullSyncData = async () => {
     );
 
     if (!fullSyncResponse.ok) {
+      addRoutingTempLogEntry(`${serverAddress}/sync/full`, "error");
       throw new Error("Failed to fetch /sync/full" + fullSyncResponse.status);
     }
 
@@ -87,6 +88,7 @@ export const fetchPreviewsByHash = async (photoIds: string[]) => {
         });
 
         if (!previewResponse.ok) {
+          addRoutingTempLogEntry(`${serverAddress}/preview/${id}`, "error");
           throw new Error(`Failed to fetch preview for id: ${id}`);
         }
 
@@ -117,6 +119,7 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
     );
 
     if (!previewResponse.ok) {
+      addRoutingTempLogEntry(`${serverAddress}/previews?page=${page}&page_size=${pageSize}`, "error");
       throw new Error(`Failed to fetch preview for page: ${page}`);
     }
 
@@ -142,6 +145,7 @@ export const fetchPreviewById = async (photoId: string) => {
     );
 
     if (!previewResponse.ok) {
+      addRoutingTempLogEntry(`${serverAddress}/preview/${photoId}`, "error");
       throw new Error(`Failed to fetch preview for ID: ${photoId}`);
     }
 
@@ -173,6 +177,7 @@ export async function uploadFileAPI(fileFormData: FormData) {
     });
     return { ok: response.ok, status: response.status };
   } catch (error) {
+    addRoutingTempLogEntry(`${serverAddress}/image/upload`, "error");
     console.error("Error uploading file:", error);
     throw error;
   }
@@ -192,6 +197,7 @@ export const fetchLogs = async (page: number, pageSize:number) => {
     );
 
     if (!response.ok) {
+      addRoutingTempLogEntry(`${serverAddress}/logs?page=${page}&page_size=${pageSize}`, "error");
       throw new Error(`Failed to fetch logs; page: ${page}`);
     }
 
@@ -206,12 +212,12 @@ export const fetchLogs = async (page: number, pageSize:number) => {
 };
 
 
-export async function addRoutingTempLogEntry(url: string) {
+export async function addRoutingTempLogEntry(url: string, level_:string) {
   const routeHistoryCookie = cookies().get("routeHistory");
   let routeHistory = routeHistoryCookie ? JSON.parse(routeHistoryCookie.value) : [];
 
   const newEntry = {
-    level: "info",
+    level: level_,
     message: `Request made to ${url}`,
     date: new Date().toISOString(),
   };
