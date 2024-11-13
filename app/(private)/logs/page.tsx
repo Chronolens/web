@@ -83,9 +83,13 @@ const InfiniteScrollExample1 = () => {
 
   useEffect(() => {
     const actions = Cookies.get("routeHistory")
-      ? JSON.parse(Cookies.get("routeHistory")).sort((a, b) => b.date - a.date)
+      ? JSON.parse(Cookies.get("routeHistory")).reverse()
       : [];
     setRouteHistory(actions);
+  }, []);
+
+  useEffect(() => {
+    if (displayType !== "serverLogs") return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -93,7 +97,7 @@ const InfiniteScrollExample1 = () => {
           fetchMoreData();
         }
       },
-      { threshold: 1.0 }
+      { threshold: 0.8 }
     );
 
     if (loaderRef.current) {
@@ -104,8 +108,9 @@ const InfiniteScrollExample1 = () => {
       if (loaderRef.current) {
         observer.unobserve(loaderRef.current);
       }
+      observer.disconnect();
     };
-  }, [hasMore, loading]);
+  }, [displayType, hasMore, loading]);
 
   return (
     <div className="h-screen flex flex-col">
