@@ -39,33 +39,8 @@ const InfiniteScrollExample1 = () => {
     fetchLogs(indexRef.current, pageSize)
       .then((res) => {
         if (Array.isArray(res)) {
-          const dates = res.map((item) => item.date);
-          const maxDate = Math.max(...dates);
-          const minDate = Math.min(...dates);
-
-          let filteredRouteHistory = [];
-          if (indexRef.current === 1) {
-            filteredRouteHistory = routeHistory.filter(
-              (entry) => entry.date <= maxDate && entry.date >= minDate
-            );
-          } else {
-            if (res.length < pageSize) {
-              filteredRouteHistory = routeHistory.filter(
-                (entry) => entry.date >= minDate
-              );
-            } else {
-              filteredRouteHistory = routeHistory.filter(
-                (entry) => entry.date >= minDate && entry.date <= maxDate
-              );
-            }
-          }
-
-          const itemsToDisplay = [...filteredRouteHistory, ...res].sort(
-            (a, b) => b.date - a.date
-          );
-
           setItems((prevItems) => {
-            const uniqueItems = [...new Set([...prevItems, ...itemsToDisplay])];
+            const uniqueItems = [...new Set([...prevItems, ...res])];
             return uniqueItems;
           });
 
@@ -113,8 +88,8 @@ const InfiniteScrollExample1 = () => {
   }, [displayType, hasMore, loading]);
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex space-x-4 p-4">
+    <div className="h-screen flex-col">
+      <div className="flex-col space-x-4 p-4">
         <button
           onClick={() => setDisplayType("sessionLogs")}
           className={`px-4 py-2 font-bold ${
@@ -133,10 +108,9 @@ const InfiniteScrollExample1 = () => {
         </button>
       </div>
 
-      <div className="flex-grow overflow-y-auto p-4">
+      <div className="flex-col overflow-y-auto p-4">
         {displayType === "sessionLogs" && (
-          <div className="space-y-2">
-            <div className="max-h-full overflow-y-auto">
+            <div className="max-h-full overflow-y-auto space-y-2">
               <ul className="space-y-2">
                 {routeHistory.length > 0 ? (
                   routeHistory.map((entry, index) => (
@@ -153,24 +127,21 @@ const InfiniteScrollExample1 = () => {
                 )}
               </ul>
             </div>
-          </div>
         )}
 
         {displayType === "serverLogs" && (
-          <div className="space-y-2">
-            <div className="max-h-full overflow-y-auto">
-              <ul className="space-y-2">
-                {items.slice().map((log) => (
-                  <li key={log.id} className="flex items-center space-x-2 ml-4 mb-2">
-                    <span className={`${getLevelColor(log.level)} font-bold`}>
-                      [{log.level}]
-                    </span>
-                    <span className="text-gray-700">{log.message}</span>
-                    <span className="text-gray-500">- {formatDate(log.date)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="space-y-2 max-h-full overflow-y-auto">
+            <ul className="space-y-2">
+              {items.slice().map((log) => (
+                <li key={log.id} className="flex items-center space-x-2 ml-4 mb-2">
+                  <span className={`${getLevelColor(log.level)} font-bold`}>
+                    [{log.level}]
+                  </span>
+                  <span className="text-gray-700">{log.message}</span>
+                  <span className="text-gray-500">- {formatDate(log.date)}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 
