@@ -88,7 +88,7 @@ const InfiniteScrollExample1 = () => {
   }, [displayType, hasMore, loading]);
 
   return (
-    <div className="h-screen flex-col">
+    <div className="h-full w-full flex-col">
       <div className="flex-col space-x-4 p-4">
         <button
           onClick={() => setDisplayType("sessionLogs")}
