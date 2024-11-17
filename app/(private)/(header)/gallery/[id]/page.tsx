@@ -1,8 +1,71 @@
-export default async function ImageDisplay({
+import { fetchMediaById } from "@/lib/network/network";
+import Image from "next/image";
+import cameraIcon from "@/public/static/icons/Aperture.svg";
+import imageIcon from "@/public/static/icons/ImageSquare.svg";
+import cloudIcon from "@/public/static/icons/Cloud.svg";
+import locationIcon from "@/public/static/icons/MapPin.svg";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+
+export default async function MediaDisplay({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const id = (await params).id;
-  return <div>ImageDisplay {id}</div>;
+  // const media = await fetchMediaById(id);
+  const test_url =
+    "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwallpapercave.com%2Fwp%2FdvbKFz3.jpg&f=1&nofb=1&ipt=e18f7a5948fa93e8cea7501355a0ab2bc1a699b4708a174fd81c6c39306baa37&ipo=images";
+
+  return (
+    <div className="h-full py-11 px-6 ">
+      <div className="flex flex-row items-center justify-center h-full">
+        <div className="relative h-full w-full">
+          <Image src={test_url} objectFit="contain" fill alt="" />
+        </div>
+        <div className="flex-none w-80 bg-gradient-metadata h-full">
+          <h1 className="text-foreground text-xl mx-3 mt-4">
+            {new Date().toLocaleString()}
+          </h1>
+          <div className="flex flex-col mx-4 mt-20 space-y-10 ">
+            <MetadataItem
+              icon={cameraIcon}
+              label="Canon EOS 5D Mark IV"
+              value="f/1.9 - 1/100 - 7.5mm - ISO 400"
+            />
+            <MetadataItem
+              icon={imageIcon}
+              label="IMG3124_14_07_2024_24215221_242.jpg"
+              value="16.0MP - 6000 x 4000"
+            />
+            <MetadataItem icon={cloudIcon} label="Cloud Coverage" value="0%" />
+            <MetadataItem
+              icon={locationIcon}
+              label="Location"
+              value="32.711581, -16.852452"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MetadataItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: StaticImport;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex flex-row">
+      <Image src={icon} alt="" height={30} width={30} />
+      <div className="flex flex-col ml-2 justify-center">
+        <span className="text-sm">{label}</span>
+        <span className="text-xs text-gray-400">{value}</span>
+      </div>
+    </div>
+  );
 }

@@ -1,5 +1,6 @@
 "use client";
 import { fetchPreviewsPaged } from "@/lib/network/network";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -53,36 +54,15 @@ export default function GalleryPage() {
   );
 }
 
-// function PreviewDateSection({ pictures }: { pictures: any[] }) {
-//   const groupByDate = pictures.reduce((acc, picture) => {
-//     const currentDate = new Date(picture.timestamp).toDateString();
-//     if (!acc[currentDate]) {
-//       acc[currentDate] = [];
-//     } else {
-//       acc[currentDate].push(picture);
-//     }
-//     return acc;
-//   });
-//   return (
-//     {pictures.map((groupByDate, index) => (
-//       <h1 className="text-2xl font-bold">{.toDateString()}</h1>
-//         <div className="flex flex-wrap gap-1">
-//           {pictures.map((picture, index) => (
-//             <PreviewDisplay key={index} picture={picture} />
-//           ))}
-//     </div>
-//     ))}
-//   );
-// }
-//
-
 function PreviewDisplay({ preview }) {
   const [error, setError] = useState(false);
+  const router = useRouter();
   return (
     <img
       className="object-cover h-[200px] min-w-[130px] max-w-96"
-      src={!error ? preview : "/static/images/image-placeholder.jpg"}
+      src={!error ? preview.url : "/static/images/image-placeholder.jpg"}
       alt=""
+      onClick={() => router.push(`/gallery/${preview.id}`)}
       onError={() => setError(true)}
     />
   );

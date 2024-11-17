@@ -74,35 +74,6 @@ export const fetchFullSyncData = async () => {
   }
 };
 
-// Function to fetch previews for each photo hash
-export const fetchPreviewsByHash = async (photoIds: string[]) => {
-  const serverAddress = getServerAdrress();
-  try {
-    // Fetch previews for each photo hash
-    const previewData = await Promise.all(
-      photoIds.map(async (id) => {
-        const previewResponse = await fetch(`${serverAddress}/preview/${id}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (!previewResponse.ok) {
-          throw new Error(`Failed to fetch preview for id: ${id}`);
-        }
-
-        const preview = await previewResponse.json();
-        console.log(preview);
-        return { id, preview };
-      }),
-    );
-
-    return previewData; // Return the fetched preview data
-  } catch (err) {
-    console.error("Error fetching preview data:", err);
-    throw err;
-  }
-};
-
 export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
   const serverAddress = getServerAdrress();
   try {
@@ -112,7 +83,6 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",
-        next: { revalidate: 0 },
       },
     );
 
@@ -121,6 +91,7 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
     }
 
     const previewData = await previewResponse.json();
+    console.log("Previews fetched:", previewData); // Check the preview data array content
     return previewData; // Return the fetched preview data
   } catch (err) {
     console.error("Error fetching preview data:", err);
@@ -129,24 +100,24 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
 };
 
 // Function to fetch preview URL for a single photo ID
-export const fetchPreviewById = async (photoId: string) => {
+export const fetchMediaById = async (mediaId: string) => {
   const serverAddress = getServerAdrress();
   try {
     // Fetch preview for the given photo ID
-    const previewResponse = await fetchWithCookies(
-      `${serverAddress}/preview/${photoId}`,
+    const response = await fetchWithCookies(
+      `${serverAddress}/media/${mediaId}`,
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",
       },
     );
 
-    if (!previewResponse.ok) {
-      throw new Error(`Failed to fetch preview for ID: ${photoId}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch preview for ID: ${mediaId}`);
     }
 
-    const previewUrl = await previewResponse.text(); // Fetches the URL directly as text
-    return previewUrl; // Return the URL
+    const media = await response.json();
+    return media;
   } catch (err) {
     console.error("Error fetching preview data:", err);
     throw err;
@@ -178,7 +149,6 @@ export async function uploadFileAPI(fileFormData: FormData) {
   }
 }
 
-// Function to fetch 50 logs
 export const fetchLogs = async (page: number, pageSize:number) => {
   const serverAddress = getServerAdrress();
 
