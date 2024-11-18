@@ -5,6 +5,8 @@ import imageIcon from "@/public/static/icons/ImageSquare.svg";
 import cloudIcon from "@/public/static/icons/Cloud.svg";
 import locationIcon from "@/public/static/icons/MapPin.svg";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { Suspense } from "react";
+import { FullScaleImage } from "@/components/FullScaleImage";
 
 export default async function MediaDisplay({
   params,
@@ -12,15 +14,13 @@ export default async function MediaDisplay({
   params: Promise<{ id: string }>;
 }) {
   const id = (await params).id;
-  // const media = await fetchMediaById(id);
-  const test_url =
-    "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwallpapercave.com%2Fwp%2FdvbKFz3.jpg&f=1&nofb=1&ipt=e18f7a5948fa93e8cea7501355a0ab2bc1a699b4708a174fd81c6c39306baa37&ipo=images";
+  const media = await fetchMediaById(id);
 
   return (
     <div className="h-full py-11 px-6 ">
       <div className="flex flex-row items-center justify-center h-full">
         <div className="relative h-full w-full">
-          <Image src={test_url} objectFit="contain" fill alt="" />
+          <FullScaleImage media_url={media} />
         </div>
         <div className="flex-none w-80 bg-gradient-metadata h-full">
           <h1 className="text-foreground text-xl mx-3 mt-4">

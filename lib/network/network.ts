@@ -11,9 +11,9 @@ function getServerAdrress(): string {
 
 export async function fetchWithCookies(url: string, options: RequestInit) {
   const session = await auth();
-  if (session){
-    addRoutingTempLogEntry(url);
-  }
+  // if (session){
+  //   addRoutingTempLogEntry(url);
+  // }
   return fetch(url, {
     ...options,
     headers: {
@@ -91,7 +91,6 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
     }
 
     const previewData = await previewResponse.json();
-    console.log("Previews fetched:", previewData); // Check the preview data array content
     return previewData; // Return the fetched preview data
   } catch (err) {
     console.error("Error fetching preview data:", err);
@@ -116,7 +115,7 @@ export const fetchMediaById = async (mediaId: string) => {
       throw new Error(`Failed to fetch preview for ID: ${mediaId}`);
     }
 
-    const media = await response.json();
+    const media = await response.text();
     return media;
   } catch (err) {
     console.error("Error fetching preview data:", err);
