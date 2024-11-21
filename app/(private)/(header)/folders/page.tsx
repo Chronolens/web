@@ -1,8 +1,9 @@
+import { PeopleSection } from "@/components/folders/PeopleSection";
 
-export default function FoldersPage() {
+export default async function FoldersPage() {
   return (
-    <div className="flex h-full text-center items-center justify-center">
-      <p>Folders page to be done</p>
+    <div className="flex flex-col h-full w-full">
+      <PeopleSection />
     </div>
   );
 }

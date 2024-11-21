@@ -3,7 +3,6 @@ import { auth } from "@/auth";
 import DEFAULT_SERVER_ADDRESS from "../constants";
 import { cookies } from "next/headers";
 
-
 function getServerAdrress(): string {
   const serverAddress = cookies().get("serverAddress")?.value;
   return serverAddress ? serverAddress : DEFAULT_SERVER_ADDRESS;
@@ -87,13 +86,72 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
     );
 
     if (!previewResponse.ok) {
-      throw new Error(`Failed to fetch preview for page: ${page}`);
+      throw new Error(
+        `Failed to fetch preview for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
     }
 
     const previewData = await previewResponse.json();
     return previewData; // Return the fetched preview data
   } catch (err) {
     console.error("Error fetching preview data:", err);
+    throw err;
+  }
+};
+
+export const fetchFacePreviewsPaged = async (
+  face_id: string,
+  page: number,
+  pageSize: number,
+) => {
+  const serverAddress = getServerAdrress();
+  try {
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/face/${face_id}?page=${page}&page_size=${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    if (!previewResponse.ok) {
+      throw new Error(
+        `Failed to fetch face ${face_id} previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
+    }
+
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error("Error fetching preview data:", err);
+    throw err;
+  }
+};
+
+export const fetchClusterPreviewsPaged = async (
+  cluster_id: string,
+  page: number,
+  pageSize: number,
+) => {
+  const serverAddress = getServerAdrress();
+  try {
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/cluster/${cluster_id}?page=${page}&page_size=${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    if (!previewResponse.ok) {
+      throw new Error(
+        `Failed to fetch cluster ${cluster_id} previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
+    }
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error(`Error fetching cluster ${cluster_id} preview data:`, err);
     throw err;
   }
 };
@@ -115,7 +173,7 @@ export const fetchMediaById = async (mediaId: string) => {
       throw new Error(`Failed to fetch preview for ID: ${mediaId}`);
     }
 
-    const media = await response.text();
+    const media = await response.json();
     return media;
   } catch (err) {
     console.error("Error fetching preview data:", err);
@@ -148,7 +206,7 @@ export async function uploadFileAPI(fileFormData: FormData) {
   }
 }
 
-export const fetchLogs = async (page: number, pageSize:number) => {
+export const fetchLogs = async (page: number, pageSize: number) => {
   const serverAddress = getServerAdrress();
 
   try {
@@ -174,10 +232,31 @@ export const fetchLogs = async (page: number, pageSize:number) => {
   }
 };
 
+export async function fetchFaces() {
+  const serverAddress = getServerAdrress();
+  try {
+    const response = await fetchWithCookies(`${serverAddress}/faces`, {
+      headers: { "Content-Type": "application/json" },
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch faces" + response.status);
+    }
+
+    const faces = await response.json();
+    return faces;
+  } catch (err) {
+    console.error("Error fetching faces:", err);
+    throw err;
+  }
+}
 
 export async function addRoutingTempLogEntry(url: string) {
   const routeHistoryCookie = cookies().get("routeHistory");
-  let routeHistory = routeHistoryCookie ? JSON.parse(routeHistoryCookie.value) : [];
+  let routeHistory = routeHistoryCookie
+    ? JSON.parse(routeHistoryCookie.value)
+    : [];
 
   const newEntry = {
     level: "info",

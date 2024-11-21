@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { fetchLogs } from "@/lib/network/network";
 import Cookies from "js-cookie";
 
-const InfiniteScrollExample1 = () => {
+export default function ActivityPage() {
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false); // Track loading state
@@ -163,6 +163,4 @@ const InfiniteScrollExample1 = () => {
       )}
     </div>
   );
-};
-
-export default InfiniteScrollExample1;
+}

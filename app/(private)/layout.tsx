@@ -11,8 +11,10 @@ export default function PrivateLayout({
     <UploadModalProvider>
       <UploadFilesProvider>
         <section className="flex flex-row h-screen relative">
-          <SideBar />
-            {children}
+          <div className="flex-none">
+            <SideBar />
+          </div>
+          {children}
         </section>
       </UploadFilesProvider>
     </UploadModalProvider>
