@@ -4,6 +4,8 @@ import Image from "next/image";
 import storageIcon from "@/public/static/icons/Cloud.svg";
 import activityIcon from "@/public/static/icons/List.svg";
 import { signOut } from "next-auth/react";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { ReactNode } from "react";
 
 export default function SettingsPage() {
   return (
@@ -45,10 +47,10 @@ function SettingsSection({
   description,
   children,
 }: {
-  icon: any;
+  icon: StaticImport;
   title: string;
   description: string;
-  children?: any;
+  children?: ReactNode;
 }) {
   return (
     <div className="flex flex-row">
