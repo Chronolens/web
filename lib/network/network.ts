@@ -86,13 +86,72 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
     );
 
     if (!previewResponse.ok) {
-      throw new Error(`Failed to fetch preview for page: ${page}`);
+      throw new Error(
+        `Failed to fetch preview for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
     }
 
     const previewData = await previewResponse.json();
     return previewData; // Return the fetched preview data
   } catch (err) {
     console.error("Error fetching preview data:", err);
+    throw err;
+  }
+};
+
+export const fetchFacePreviewsPaged = async (
+  face_id: string,
+  page: number,
+  pageSize: number,
+) => {
+  const serverAddress = getServerAdrress();
+  try {
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/face/${face_id}?page=${page}&page_size=${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    if (!previewResponse.ok) {
+      throw new Error(
+        `Failed to fetch face ${face_id} previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
+    }
+
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error("Error fetching preview data:", err);
+    throw err;
+  }
+};
+
+export const fetchClusterPreviewsPaged = async (
+  cluster_id: string,
+  page: number,
+  pageSize: number,
+) => {
+  const serverAddress = getServerAdrress();
+  try {
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/cluster/${cluster_id}?page=${page}&page_size=${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    if (!previewResponse.ok) {
+      throw new Error(
+        `Failed to fetch cluster ${cluster_id} previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
+    }
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error(`Error fetching cluster ${cluster_id} preview data:`, err);
     throw err;
   }
 };
