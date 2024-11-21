@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "The web-based app",
 };
 
-const outfit = Outfit();
+const outfit = Outfit({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -16,8 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={outfit.className}>
-      <body className="overflow-hidden">
-      {children}</body>
+      <body className="overflow-hidden">{children}</body>
     </html>
   );
 }

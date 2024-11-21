@@ -5,7 +5,6 @@ import imageIcon from "@/public/static/icons/ImageSquare.svg";
 import cloudIcon from "@/public/static/icons/Cloud.svg";
 import locationIcon from "@/public/static/icons/MapPin.svg";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import { Suspense } from "react";
 import { FullScaleImage } from "@/components/FullScaleImage";
 
 export default async function MediaDisplay({
