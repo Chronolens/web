@@ -56,7 +56,7 @@ const triggerFileInput = () => {
 
 function DragAndDrop() {
   const { files, addFiles } = useUploadFilesContext();
-  const [isDragging, setIsDragging] = useState(false);
+  // const [isDragging, setIsDragging] = useState(false);
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -68,11 +68,11 @@ function DragAndDrop() {
   };
   const handleDragOver = (e) => {
     e.preventDefault();
-    setIsDragging(true);
+    // setIsDragging(true);
   };
 
   const handleDragLeave = () => {
-    setIsDragging(false);
+    // setIsDragging(false);
   };
 
   return (
@@ -167,7 +167,7 @@ function FileStatus({ status }: { status: UploadFileStatus }) {
     case UploadFileStatus.UPLOADED:
       return <span className="text-green-light"> Uploaded </span>;
     case UploadFileStatus.ALREADY_EXISTS:
-      return <span className="text-green-light"> Already Uploaded </span>;
+      return <span className="text-yellow-light"> Already Uploaded </span>;
     case UploadFileStatus.ERROR:
       return <span className="text-red-light"> Failed to Upload </span>;
     default:

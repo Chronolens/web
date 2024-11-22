@@ -73,7 +73,8 @@ export default function UploadFilesProvider({ children }) {
     // if the file is already in the list, don't add it
     const filteredFiles = fileArray.filter(
       (file) =>
-        !files.some((f) => f.name === file.name && f.size === file.size),
+        !files.some((f) => f.name === file.name && f.size === file.size) &&
+        file.file.type.includes("image"),
     );
     setFiles((prev) => [...prev, ...filteredFiles]);
   };
@@ -108,10 +109,9 @@ export default function UploadFilesProvider({ children }) {
 
       if (response.status === 200) {
         updateFileProgress(name, UploadFileStatus.UPLOADED);
-      } else if (response.status === 412){
+      } else if (response.status === 412) {
         updateFileProgress(name, UploadFileStatus.ALREADY_EXISTS);
-      }else {
-
+      } else {
         updateFileProgress(name, UploadFileStatus.ERROR);
       }
     } catch (error) {
