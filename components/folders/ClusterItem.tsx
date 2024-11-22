@@ -8,7 +8,7 @@ export function ClusterItem({ cluster }) {
   return (
     <div key={cluster.cluster_id} className="cursor-pointer" onClick={() => router.push(`/folders/cluster/${cluster.cluster_id}`)}>
       <div className="relative h-48 w-72">
-        <ImageOrError image_url={cluster.photo_link}/>
+        <ImageOrError image_url={cluster.photo_url}/>
       </div>
       <div className="flex w-full justify-center"> {cluster.name} </div>
     </div>
