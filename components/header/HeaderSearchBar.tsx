@@ -1,36 +1,21 @@
 "use client";
 import searchIcon from "@/public/static/icons/MagnifyingGlass.svg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function HeaderSearchBar() {
   const [searchInput, setSearchInput] = useState("");
+  const router = useRouter();
+
   const handleSearchInputChange = (e) => {
     setSearchInput(e.target.value);
   };
   const handleSearchSubmit = async (e) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent the default form submission
-      try {
-        const response = await fetch("/api/search", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ query: searchInput }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        console.log("Search results:", data);
-        // Handle the search results as needed (e.g., update state or display results)
-      } catch (error) {
-        console.error("Error during search:", error);
-      }
-      setSearchInput(""); // Clear the input field after submission
+      e.preventDefault();
+      if (searchInput === "") return;
+      router.push("/search/" + searchInput);
     }
   };
   return (

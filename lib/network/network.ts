@@ -128,6 +128,36 @@ export const fetchFacePreviewsPaged = async (
   }
 };
 
+export const fetchSearchPreviewsPaged = async (
+  query: string,
+  page: number,
+  pageSize: number,
+) => {
+  const serverAddress = getServerAdrress();
+  console.log("fetchSearchPreviewsPaged", query, page, pageSize);
+  try {
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/search?query=${query}&page=${page}&page_size=${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    if (!previewResponse.ok) {
+      throw new Error(
+        `Failed to fetch search previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
+    }
+
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error("Error fetching search preview data:", err);
+    throw err;
+  }
+};
+
 export const fetchClusterPreviewsPaged = async (
   cluster_id: string,
   page: number,
