@@ -7,7 +7,6 @@ export function FaceItem({ face }) {
   const router = useRouter();
   return (
     <div
-      key={face.face_id + face.name}
       className="cursor-pointer"
       onClick={() => router.push(`/folders/face/${face.face_id}`)}
     >
