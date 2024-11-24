@@ -10,10 +10,10 @@ export async function PeopleSection() {
       <h2 className="text-2xl"> People </h2>
       <div className="flex flex-row mt-4 overflow-auto h-[245px] w-full space-x-8">
         {faces.faces.map((face) => (
-          <FaceItem face={face} />
+          <FaceItem key={face.face_id + face.name} face={face} />
         ))}
         {faces.clusters.map((cluster) => (
-          <ClusterItem cluster={cluster} />
+          <ClusterItem key={cluster.cluster_id} cluster={cluster} />
         ))}
       </div>
     </>
