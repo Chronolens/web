@@ -284,7 +284,7 @@ export async function fetchFaces() {
 
 export async function addRoutingTempLogEntry(url: string) {
   const routeHistoryCookie = cookies().get("routeHistory");
-  let routeHistory = routeHistoryCookie
+  const routeHistory = routeHistoryCookie
     ? JSON.parse(routeHistoryCookie.value)
     : [];
 

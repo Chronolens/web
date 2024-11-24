@@ -2,32 +2,31 @@
 import { UploadModalContext } from "@/providers/uploadModalProvider";
 import uploadIcon from "@/public/static/icons/CloudArrowUp.svg";
 import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef } from "react";
 import { HeaderSearchBar } from "./HeaderSearchBar";
-import { signOut } from "next-auth/react";
 
 export function PrivateHeader() {
-  const [menuOpen, setMenuOpen] = useState(false); // State to control menu visibility
+  // const [menuOpen, setMenuOpen] = useState(false); // State to control menu visibility
   const menuRef = useRef(null); // Reference to the menu element
   const { openUploadModal } = useContext(UploadModalContext);
-
-  const handleProfileClick = () => {
-    setMenuOpen((prev) => !prev); // Toggle menu visibility
-  };
-
-  // Close the menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuOpen(false); // Close the menu
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [menuRef]);
+  //
+  // const handleProfileClick = () => {
+  //   setMenuOpen((prev) => !prev); // Toggle menu visibility
+  // };
+  //
+  // // Close the menu when clicking outside
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (menuRef.current && !menuRef.current.contains(event.target)) {
+  //       setMenuOpen(false); // Close the menu
+  //     }
+  //   };
+  //
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [menuRef]);
 
   return (
     <header className="z-40 h-20 flex-none bg-background px-4 py-4 text-foreground">

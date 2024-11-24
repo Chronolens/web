@@ -15,17 +15,19 @@ export default async function MediaDisplay({
   const id = (await params).id;
   const media = await fetchMediaById(id);
 
+  console.log(media);
   const date = new Date(media.created_at).toUTCString();
   return (
     <div className="h-full py-11 px-6 ">
       <div className="flex flex-row items-center justify-center h-full">
-        <div className="relative h-full w-full">
+        <div
+          // className={`relative h-[${media.image_length}px] w-[${media.image_width}px]`}
+          className={`relative h-full w-full`}
+        >
           <FullScaleImage media_url={media.media_url} />
         </div>
         <div className="flex-none w-80 bg-gradient-metadata h-full">
-          <h1 className="text-foreground text-xl mx-3 mt-4">
-            {date}
-          </h1>
+          <h1 className="text-foreground text-xl mx-3 mt-4">{date}</h1>
           <div className="flex flex-col mx-4 mt-20 space-y-10 ">
             <MetadataItem
               icon={cameraIcon}

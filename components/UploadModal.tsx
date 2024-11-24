@@ -9,7 +9,7 @@ import Image from "next/image";
 import removeItemIcon from "@/public/static/icons/X.svg";
 import retryItemIcon from "@/public/static/icons/ArrowCounterClockwise.svg";
 import addMoreIcon from "@/public/static/icons/Plus.svg";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 export default function UploadModal() {
   const { isUploadModalOpen, closeUploadModal } =
