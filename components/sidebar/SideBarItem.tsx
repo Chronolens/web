@@ -16,7 +16,7 @@ export function SidebarItem({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const selected = pathname === link;
+  const selected = pathname.includes(link);
   return (
     <li
       className={`flex cursor-pointer items-center space-x-4 py-3 pl-4 ${
