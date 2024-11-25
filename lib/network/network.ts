@@ -43,36 +43,6 @@ export async function refreshAccessToken(token) {
   });
 }
 
-export const fetchFullSyncData = async () => {
-  const serverAddress = getServerAdrress();
-  try {
-    const fullSyncResponse = await fetchWithCookies(
-      `${serverAddress}/sync/full`,
-      {
-        headers: { "Content-Type": "application/json" },
-        method: "GET",
-      },
-    );
-
-    if (!fullSyncResponse.ok) {
-      throw new Error("Failed to fetch /sync/full" + fullSyncResponse.status);
-    }
-
-    const syncData = await fullSyncResponse.json(); // Get the JSON response
-
-    const photoHashes = Object.values(syncData);
-
-    // Print syncData and photoHashes to the terminal
-    //console.log("Full sync data:", syncData);
-    //console.log("Extracted photo hashes:", photoHashes);
-
-    return photoHashes; // Return the array of photo hashes
-  } catch (err) {
-    console.error("Error fetching sync data:", err);
-    throw err;
-  }
-};
-
 export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
   const serverAddress = getServerAdrress();
   try {
@@ -262,7 +232,7 @@ export const fetchLogs = async (page: number, pageSize: number) => {
   }
 };
 
-export async function fetchFaces() {
+export async function fetchPeople() {
   const serverAddress = getServerAdrress();
   try {
     const response = await fetchWithCookies(`${serverAddress}/faces`, {
