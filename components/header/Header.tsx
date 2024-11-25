@@ -1,32 +1,12 @@
 "use client";
-import { UploadModalContext } from "@/providers/uploadModalProvider";
+import { useUploadModalContext } from "@/providers/uploadModalProvider";
 import uploadIcon from "@/public/static/icons/CloudArrowUp.svg";
+import userAvatar from "@/public/static/images/user-avatar.png";
 import Image from "next/image";
-import { useContext, useRef } from "react";
 import { HeaderSearchBar } from "./HeaderSearchBar";
 
 export function PrivateHeader() {
-  // const [menuOpen, setMenuOpen] = useState(false); // State to control menu visibility
-  const menuRef = useRef(null); // Reference to the menu element
-  const { openUploadModal } = useContext(UploadModalContext);
-  //
-  // const handleProfileClick = () => {
-  //   setMenuOpen((prev) => !prev); // Toggle menu visibility
-  // };
-  //
-  // // Close the menu when clicking outside
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (menuRef.current && !menuRef.current.contains(event.target)) {
-  //       setMenuOpen(false); // Close the menu
-  //     }
-  //   };
-  //
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [menuRef]);
+  const { openUploadModal } = useUploadModalContext();
 
   return (
     <header className="z-40 h-20 flex-none bg-background px-4 py-4 text-foreground">
@@ -43,11 +23,7 @@ export function PrivateHeader() {
               <p className="pl-1"> Upload </p>
             </button>
 
-            <div className="relative" ref={menuRef}>
-              <button className="h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white">
-                <span className="font-bold">P</span>{" "}
-              </button>
-            </div>
+            <Image className="rounded-full" src={userAvatar} height={40} width={40} alt="user" />
           </div>
         </div>
       </div>

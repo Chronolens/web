@@ -1,9 +1,14 @@
 "use client";
 
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
-export const UploadModalContext = createContext({});
+const UploadModalContext = createContext<UploadModalContextType>();
 
+export interface UploadModalContextType {
+  isUploadModalOpen: boolean;
+  openUploadModal: () => void;
+  closeUploadModal: () => void;
+}
 export default function UploadModalProvider({ children }) {
   const [isUploadModalOpen, setIsModalOpen] = useState(false);
   const openUploadModal = () => setIsModalOpen(true);
@@ -14,6 +19,12 @@ export default function UploadModalProvider({ children }) {
     closeUploadModal,
   };
   return (
-    <UploadModalContext.Provider value={state}>{children}</UploadModalContext.Provider>
+    <UploadModalContext.Provider value={state}>
+      {children}
+    </UploadModalContext.Provider>
   );
+}
+
+export function useUploadModalContext() {
+  return useContext(UploadModalContext);
 }

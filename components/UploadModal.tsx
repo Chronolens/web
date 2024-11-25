@@ -4,16 +4,15 @@ import {
   UploadFileStatus,
   useUploadFilesContext,
 } from "@/providers/uploadFilesProvider";
-import { UploadModalContext } from "@/providers/uploadModalProvider";
+import { useUploadModalContext } from "@/providers/uploadModalProvider";
 import Image from "next/image";
 import removeItemIcon from "@/public/static/icons/X.svg";
 import retryItemIcon from "@/public/static/icons/ArrowCounterClockwise.svg";
 import addMoreIcon from "@/public/static/icons/Plus.svg";
-import { useContext } from "react";
+import { useEffect } from "react";
 
 export default function UploadModal() {
-  const { isUploadModalOpen, closeUploadModal } =
-    useContext(UploadModalContext);
+  const { isUploadModalOpen, closeUploadModal } = useUploadModalContext();
   const { addFiles } = useUploadFilesContext();
   const handleChange = (e) => {
     const files = e.target.files;
@@ -21,6 +20,17 @@ export default function UploadModal() {
     if (!files.length) return;
     addFiles(files);
   };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        closeUploadModal();
+      }
+    };
+    if (isUploadModalOpen) window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isUploadModalOpen, closeUploadModal]);
   if (!isUploadModalOpen) return null;
   return (
     <div
