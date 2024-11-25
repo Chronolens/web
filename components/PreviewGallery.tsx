@@ -56,12 +56,15 @@ export function PreviewGallery({ fetchFunction }) {
         {previews.map((preview, index) => (
           <PreviewDisplay key={index} preview={preview} />
         ))}
+        {hasMore && (
+          <div
+            ref={loaderRef}
+            className="flex w-full items-center justify-center"
+          >
+            <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-500 border-t-foreground"></div>
+          </div>
+        )}
       </div>
-      {hasMore && (
-        <p ref={loaderRef} className="text-center">
-          Loading
-        </p>
-      )}
     </div>
   );
 }
