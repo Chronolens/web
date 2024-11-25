@@ -1,11 +1,9 @@
 "use client";
 import { PreviewGallery } from "@/components/PreviewGallery";
 import { fetchFacePreviewsPaged } from "@/lib/network/network";
-import { useParams } from "next/navigation";
 
-export default function FacePage() {
-  const { id } = useParams<{ id: string }>();
-
+export default function FacePage({ params }: { params: { id: string } }) {
+  const id = params.id;
   return (
     <PreviewGallery
       fetchFunction={(page: number, pagesize: number) =>
