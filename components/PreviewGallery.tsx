@@ -6,6 +6,7 @@ import { PreviewDisplay } from "./PreviewDisplay";
 export function PreviewGallery({ fetchFunction }) {
   const [loading, setLoading] = useState(false);
   const [previews, setPictures] = useState([]);
+  const [error, setError] = useState(false);
 
   const pageSize = 15;
   const [hasMore, setHasMore] = useState(true);
@@ -23,6 +24,7 @@ export function PreviewGallery({ fetchFunction }) {
       setCurrentPage((prev) => prev + 1);
       setPictures((prev) => [...prev, ...previews]);
     } catch (error) {
+      setError(true);
       console.error(error);
     } finally {
       setLoading(false);
@@ -50,18 +52,24 @@ export function PreviewGallery({ fetchFunction }) {
     };
   }, [hasMore, loading]);
 
+  if (error) {
+    return <div className="text-center">Error while fetching previews</div>;
+  }
   return (
     <div className="h-full overflow-auto">
       <div className="flex flex-wrap gap-1">
         {previews.map((preview, index) => (
           <PreviewDisplay key={index} preview={preview} />
         ))}
+        {hasMore && (
+          <div
+            ref={loaderRef}
+            className="flex w-full items-center justify-center"
+          >
+            <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-500 border-t-foreground"></div>
+          </div>
+        )}
       </div>
-      {hasMore && (
-        <p ref={loaderRef} className="text-center">
-          Loading
-        </p>
-      )}
     </div>
   );
 }

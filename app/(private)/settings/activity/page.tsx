@@ -14,7 +14,7 @@ export default function ActivityPage() {
   const indexRef = useRef(1);
   const loaderRef = useRef(null);
 
-  const getLevelColor = (level) => {
+  const getLevelColor = (level: string) => {
     switch (level.toLowerCase()) {
       case "error":
         return "text-red-500";
@@ -27,7 +27,7 @@ export default function ActivityPage() {
     }
   };
 
-  const formatDate = (timestamp) => {
+  const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString();
   };
 

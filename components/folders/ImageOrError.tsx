@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function ImageOrError({ image_url }: { image_url: string }) {
+export function ImageOrError({ image_url = "" }: { image_url: string }) {
   const [error, setError] = useState(false);
   return (
     <img

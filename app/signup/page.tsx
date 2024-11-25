@@ -6,8 +6,6 @@ import { StyledInput } from "../login/StyledInput";
 // import { fetchSignUp } from "../lib/network/network";
 
 export default function SignUpPage() {
-  const router = useRouter();
-
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-gradient-primary">
       <div className="flex-col w-auto">
@@ -26,14 +24,14 @@ function SignUpForm() {
     <div className="flex w-full items-center justify-center mt-36">
       <div className="max-w-60">
         <form
-          action={async (formData: FormData) => {
-            try {
-              // fetchSignUp(formData);
-              router.push("/login");
-            } catch (error) {
-              console.error("Error signing up:", error);
-            }
-          }}
+          // action={async (formData: FormData) => {
+          //   try {
+          //     // fetchSignUp(formData);
+          //     router.push("/login");
+          //   } catch (error) {
+          //     console.error("Error signing up:", error);
+          //   }
+          // }}
           className="space-y-6"
         >
           <div>
@@ -101,4 +99,3 @@ function SignUpForm() {
     </div>
   );
 }
-
