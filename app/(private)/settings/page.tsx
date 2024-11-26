@@ -4,6 +4,9 @@ import Image from "next/image";
 import storageIcon from "@/public/static/icons/Cloud.svg";
 import activityIcon from "@/public/static/icons/List.svg";
 import { signOut } from "next-auth/react";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { ReactNode } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
   return (
@@ -21,6 +24,7 @@ export default function SettingsPage() {
             icon={activityIcon}
             title="Activity History"
             description="Check operation history such as uploads, issues, and other general activity information"
+            redirect="/settings/activity"
           />
           <Divider />
           <div className="flex w-full justify-end">
@@ -43,15 +47,27 @@ function SettingsSection({
   icon,
   title,
   description,
+  redirect,
   children,
 }: {
-  icon: any;
+  icon: StaticImport;
   title: string;
   description: string;
-  children?: any;
+  redirect?: string;
+  children?: ReactNode;
 }) {
+  const router = useRouter();
   return (
-    <div className="flex flex-row">
+    <div
+      className={`flex flex-row ${redirect ? "cursor-pointer" : ""}`}
+      onClick={
+        redirect
+          ? () => {
+              router.push(redirect);
+            }
+          : undefined
+      }
+    >
       <Image className="flex-none" src={icon} width={60} height={60} alt="" />
       <div className="flex flex-col ml-3 space-y-0.5 justify-center">
         <h2 className="text-xl"> {title}</h2>

@@ -1,5 +1,4 @@
 "use client";
-import { usePathname } from "next/navigation";
 import settingsIcon from "@/public/static/icons/gear.svg";
 import galleryIcon from "@/public/static/icons/ImageSquare.svg";
 import foldersIcon from "@/public/static/icons/FolderSimple.svg";

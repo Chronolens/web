@@ -3,7 +3,6 @@ import { auth } from "@/auth";
 import DEFAULT_SERVER_ADDRESS from "../constants";
 import { cookies } from "next/headers";
 
-
 function getServerAdrress(): string {
   const serverAddress = cookies().get("serverAddress")?.value;
   return serverAddress ? serverAddress : DEFAULT_SERVER_ADDRESS;
@@ -11,11 +10,11 @@ function getServerAdrress(): string {
 
 export async function fetchWithCookies(url: string, options: RequestInit) {
   const session = await auth();
-  
-  if (session){
-    addRoutingTempLogEntry(url, "info");
-  }
-    
+
+  // if (session){
+  //   addRoutingTempLogEntry(url, "info");
+  // }
+
   return fetch(url, {
     ...options,
     headers: {
@@ -46,69 +45,6 @@ export async function refreshAccessToken(token) {
   });
 }
 
-export const fetchFullSyncData = async () => {
-  const serverAddress = getServerAdrress();
-  try {
-    const fullSyncResponse = await fetchWithCookies(
-      `${serverAddress}/sync/full`,
-      {
-        headers: { "Content-Type": "application/json" },
-        method: "GET",
-      },
-    );
-
-    if (!fullSyncResponse.ok) {
-      addRoutingTempLogEntry(`${serverAddress}/sync/full returned error`, "error");
-      throw new Error("Failed to fetch /sync/full" + fullSyncResponse.status);
-    }
-
-    const syncData = await fullSyncResponse.json(); // Get the JSON response
-
-    const photoHashes = Object.values(syncData);
-
-    // Print syncData and photoHashes to the terminal
-    //console.log("Full sync data:", syncData);
-    //console.log("Extracted photo hashes:", photoHashes);
-
-    return photoHashes; // Return the array of photo hashes
-  } catch (err) {
-    console.error("Error fetching sync data:", err);
-    addRoutingTempLogEntry(`Attempt at full sync data failed`, "error");
-    throw err;
-  }
-};
-
-// Function to fetch previews for each photo hash
-export const fetchPreviewsByHash = async (photoIds: string[]) => {
-  const serverAddress = getServerAdrress();
-  try {
-    // Fetch previews for each photo hash
-    const previewData = await Promise.all(
-      photoIds.map(async (id) => {
-        const previewResponse = await fetch(`${serverAddress}/preview/${id}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (!previewResponse.ok) {
-          addRoutingTempLogEntry(`${serverAddress}/preview/${id} returned error`, "error");
-          throw new Error(`Failed to fetch preview for id: ${id}`);
-        }
-
-        const preview = await previewResponse.json();
-        //console.log(preview);
-        return { id, preview };
-      }),
-    );
-
-    return previewData; // Return the fetched preview data
-  } catch (err) {
-    console.error("Error fetching preview data:", err);
-    addRoutingTempLogEntry(`Attempt at fetching previews by hash failed`, "error");
-    throw err;
-  }
-};
-
 export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
   const serverAddress = getServerAdrress();
   try {
@@ -118,13 +54,14 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",
-        next: { revalidate: 0 },
       },
     );
 
     if (!previewResponse.ok) {
-      addRoutingTempLogEntry(`${serverAddress}/previews?page=${page}&page_size=${pageSize}`, "error");
-      throw new Error(`Failed to fetch preview for page: ${page}`);
+      // addRoutingTempLogEntry(`${serverAddress}/previews?page=${page}&page_size=${pageSize}`, "error");
+      throw new Error(
+        `Failed to fetch preview for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
     }
 
     const previewData = await previewResponse.json();
@@ -136,13 +73,15 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
   }
 };
 
-// Function to fetch preview URL for a single photo ID
-export const fetchPreviewById = async (photoId: string) => {
+export const fetchFacePreviewsPaged = async (
+  face_id: string,
+  page: number,
+  pageSize: number,
+) => {
   const serverAddress = getServerAdrress();
   try {
-    // Fetch preview for the given photo ID
     const previewResponse = await fetchWithCookies(
-      `${serverAddress}/preview/${photoId}`,
+      `${serverAddress}/face/${face_id}?page=${page}&page_size=${pageSize}`,
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",
@@ -150,12 +89,97 @@ export const fetchPreviewById = async (photoId: string) => {
     );
 
     if (!previewResponse.ok) {
-      addRoutingTempLogEntry(`${serverAddress}/preview/${photoId} returned error`, "error");
-      throw new Error(`Failed to fetch preview for ID: ${photoId}`);
+      // addRoutingTempLogEntry(`${serverAddress}/preview/${photoId} returned error`, "error");
+      throw new Error(
+        `Failed to fetch face ${face_id} previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
     }
 
-    const previewUrl = await previewResponse.text(); // Fetches the URL directly as text
-    return previewUrl; // Return the URL
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error("Error fetching preview data:", err);
+    throw err;
+  }
+};
+
+export const fetchSearchPreviewsPaged = async (
+  query: string,
+  page: number,
+  pageSize: number,
+) => {
+  const serverAddress = getServerAdrress();
+  console.log("fetchSearchPreviewsPaged", query, page, pageSize);
+  try {
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/search?query=${query}&page=${page}&page_size=${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    if (!previewResponse.ok) {
+      throw new Error(
+        `Failed to fetch search previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
+    }
+
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error("Error fetching search preview data:", err);
+    throw err;
+  }
+};
+
+export const fetchClusterPreviewsPaged = async (
+  cluster_id: string,
+  page: number,
+  pageSize: number,
+) => {
+  const serverAddress = getServerAdrress();
+  try {
+    const previewResponse = await fetchWithCookies(
+      `${serverAddress}/cluster/${cluster_id}?page=${page}&page_size=${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    if (!previewResponse.ok) {
+      throw new Error(
+        `Failed to fetch cluster ${cluster_id} previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
+      );
+    }
+    const previewData = await previewResponse.json();
+    return previewData; // Return the fetched preview data
+  } catch (err) {
+    console.error(`Error fetching cluster ${cluster_id} preview data:`, err);
+    throw err;
+  }
+};
+
+// Function to fetch preview URL for a single photo ID
+export const fetchMediaById = async (mediaId: string) => {
+  const serverAddress = getServerAdrress();
+  try {
+    // Fetch preview for the given photo ID
+    const response = await fetchWithCookies(
+      `${serverAddress}/media/${mediaId}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        method: "GET",
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch preview for ID: ${mediaId}`);
+    }
+
+    const media = await response.json();
+    return media;
   } catch (err) {
     addRoutingTempLogEntry(`Attempt at fetching preview by ID failed`, "error");
     console.error("Error fetching preview data:", err);
@@ -189,8 +213,7 @@ export async function uploadFileAPI(fileFormData: FormData) {
   }
 }
 
-// Function to fetch 50 logs
-export const fetchLogs = async (page: number, pageSize:number) => {
+export const fetchLogs = async (page: number, pageSize: number) => {
   const serverAddress = getServerAdrress();
 
   try {
@@ -217,10 +240,31 @@ export const fetchLogs = async (page: number, pageSize:number) => {
   }
 };
 
+export async function fetchPeople() {
+  const serverAddress = getServerAdrress();
+  try {
+    const response = await fetchWithCookies(`${serverAddress}/faces`, {
+      headers: { "Content-Type": "application/json" },
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch faces" + response.status);
+    }
+
+    const faces = await response.json();
+    return faces;
+  } catch (err) {
+    console.error("Error fetching faces:", err);
+    throw err;
+  }
+}
 
 export async function addRoutingTempLogEntry(url: string, level_:string) {
   const routeHistoryCookie = cookies().get("routeHistory");
-  let routeHistory = routeHistoryCookie ? JSON.parse(routeHistoryCookie.value) : [];
+  const routeHistory = routeHistoryCookie
+    ? JSON.parse(routeHistoryCookie.value)
+    : [];
 
   const newEntry = {
     level: level_,

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { fetchLogs } from "@/lib/network/network";
 import Cookies from "js-cookie";
 
-const InfiniteScrollExample1 = () => {
+export default function ActivityPage() {
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ const InfiniteScrollExample1 = () => {
   const indexRef = useRef(1);
   const loaderRef = useRef(null);
 
-  const getLevelColor = (level) => {
+  const getLevelColor = (level: string) => {
     switch (level.toLowerCase()) {
       case "error":
         return "text-red-500";
@@ -28,7 +28,7 @@ const InfiniteScrollExample1 = () => {
     }
   };
 
-  const formatDate = (timestamp) => {
+  const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString();
   };
 
@@ -158,6 +158,4 @@ const InfiniteScrollExample1 = () => {
       </div>
     </div>
   );
-};
-
-export default InfiniteScrollExample1;
+}

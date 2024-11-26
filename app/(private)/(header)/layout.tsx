@@ -9,7 +9,7 @@ export default function PrivateLayout({
   return (
     <div className="flex flex-col w-screen overflow-hidden">
       <PrivateHeader />
-      <main className="h-full overflow-auto">{children}</main>
+      <main className="h-full overflow-hidden">{children}</main>
       <UploadModal />
     </div>
   );
