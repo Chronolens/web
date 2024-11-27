@@ -19,7 +19,8 @@ export async function PeopleSection() {
         </div>
       </>
     );
-  } catch (e) {
+  } catch (error) {
+    console.log(error);
     return <div> There was an error while fetching people...</div>;
   }
 }
