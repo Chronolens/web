@@ -186,14 +186,28 @@ function FileStatus({ status }: { status: UploadFileStatus }) {
 }
 
 function UploadButton() {
-  const { files, uploadAllFiles } = useUploadFilesContext();
+  const { files, uploadAllFiles, clearFiles} = useUploadFilesContext();
   const className = "w-80 bg-foreground text-background px-4 py-2 rounded-lg";
   if (files.length != 0) {
+    if (files.some((file) => file.status === UploadFileStatus.UPLOADING)) {
+      return (
+        <button className={className} disabled>
+          Uploading...
+        </button>
+      );
+    } else if (files.some((file) => file.status === UploadFileStatus.IDLE)) {
     return (
       <button className={className} onClick={uploadAllFiles}>
         Upload All Files
       </button>
     );
+    } else {
+      return (
+        <button className={className} onClick={clearFiles}>
+          Clear All Files
+        </button>
+      );
+    }
   } else {
     return (
       <button

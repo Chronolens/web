@@ -1,12 +1,9 @@
-"use client";
-import userAvatar from "@/public/static/images/user-avatar.png";
-import Image from "next/image";
+import { Divider } from "@/components/settings/Divider";
+import { SettingsSection } from "@/components/settings/SettingsSection";
+import { SignOutButton } from "@/components/settings/SignOutButton";
+import { UserDetails } from "@/components/settings/UserDetails";
 import storageIcon from "@/public/static/icons/Cloud.svg";
 import activityIcon from "@/public/static/icons/List.svg";
-import { signOut } from "next-auth/react";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import { ReactNode } from "react";
-import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
   return (
@@ -28,78 +25,9 @@ export default function SettingsPage() {
           />
           <Divider />
           <div className="flex w-full justify-end">
-            <button
-              onClick={() => {
-                signOut();
-              }}
-              className="bg-red-light px-12 py-3 rounded-lg text-foreground"
-            >
-              Sign Out
-            </button>
+            <SignOutButton />
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function SettingsSection({
-  icon,
-  title,
-  description,
-  redirect,
-  children,
-}: {
-  icon: StaticImport;
-  title: string;
-  description: string;
-  redirect?: string;
-  children?: ReactNode;
-}) {
-  const router = useRouter();
-  return (
-    <div
-      className={`flex flex-row ${redirect ? "cursor-pointer" : ""}`}
-      onClick={
-        redirect
-          ? () => {
-              router.push(redirect);
-            }
-          : undefined
-      }
-    >
-      <Image className="flex-none" src={icon} width={60} height={60} alt="" />
-      <div className="flex flex-col ml-3 space-y-0.5 justify-center">
-        <h2 className="text-xl"> {title}</h2>
-        {children}
-        <span className="text-gray-500 text-xs">{description}</span>
-      </div>
-    </div>
-  );
-}
-
-function Divider() {
-  return <hr className="w-full my-6 h-[1px] border-t-0 bg-gray-600" />;
-}
-
-function UserDetails() {
-  //FIX: Replace with actual user data by fetching it
-  const user = {
-    name: "John Doe",
-    email: "johndoe@placeholder.xyz",
-  };
-  return (
-    <div className="flex flex-row">
-      <Image
-        className="rounded-full"
-        src={userAvatar}
-        width={80}
-        height={80}
-        alt=""
-      />
-      <div className="flex flex-col ml-5 justify-center">
-        <span className="text-xl"> {user.name}</span>
-        <span> {user.email}</span>
       </div>
     </div>
   );

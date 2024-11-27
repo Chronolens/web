@@ -11,13 +11,12 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        purple: { bg: "#392548" },
-        red: { dark: "#fd93ff", light: "#ff5555" },
+        red: { dark: "#291313", light: "#ff5555" },
         green: { light: "#92ffa9" },
-        blue: { dark: "#fd93ff", light: "#84edff" },
+        blue: { dark: "#131d28", light: "#84edff" },
         yellow: { light: "#ffecad" },
         pink: { light: "#fd93ff" },
-        gray: { info: "9e9e9e", medium: "7f7c82" },
+        gray: { info: "#9e9e9e", medium: "#7f7c82" },
       },
       backgroundImage: {
         // WARN: REMEMBER TO CHANGE THIS IF YOU CHANGE THE COLORS

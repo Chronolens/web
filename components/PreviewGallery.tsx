@@ -66,7 +66,7 @@ export function PreviewGallery({ fetchFunction }) {
             ref={loaderRef}
             className="flex w-full items-center justify-center"
           >
-            <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-500 border-t-foreground"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-info border-t-foreground"></div>
           </div>
         )}
       </div>
