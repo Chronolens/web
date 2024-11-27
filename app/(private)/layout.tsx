@@ -3,7 +3,7 @@ import UploadModalProvider from "@/providers/uploadModalProvider";
 import UploadFilesProvider from "@/providers/uploadFilesProvider";
 
 export default function PrivateLayout({
-  children, // will be a page or nested layout
+  children,
 }: {
   children: React.ReactNode;
 }) {

@@ -1,8 +1,8 @@
 import { PrivateHeader } from "@/components/header/Header";
-import UploadModal from "@/components/UploadModal";
+import UploadModal from "@/components/uploadModal/UploadModal";
 
-export default function PrivateLayout({
-  children, // will be a page or nested layout
+export default function PrivateLayoutWithHeader({
+  children,
 }: {
   children: React.ReactNode;
 }) {
