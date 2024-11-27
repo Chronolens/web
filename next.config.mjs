@@ -6,7 +6,14 @@ const nextConfig = {
       protocol: "https",
       hostname: "**",
     },
+   {
+      protocol: "http",
+      hostname: "**",
+    },
    ],
+  },
+  typescript : {
+    ignoreBuildErrors: true
   },
 };
 

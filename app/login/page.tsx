@@ -38,7 +38,7 @@ async function handleFormAction(formData: FormData) {
     throw error;
   }
 }
-function LoginForm({ error }) {
+function LoginForm({ error }: { error: string | undefined }) {
   const serverAddress = cookies().get("serverAddress")?.value;
   return (
     <div className="flex w-full mt-36 items-center justify-center ">
@@ -48,7 +48,7 @@ function LoginForm({ error }) {
             id="serverAddress"
             name="serverAddress"
             placeholder="Server Address"
-            defaultValue={serverAddress}
+            defaultValue={serverAddress ? serverAddress : ""}
             type="text"
             autoComplete="url"
           />

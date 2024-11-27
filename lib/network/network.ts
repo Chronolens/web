@@ -10,9 +10,11 @@ function getServerAdrress(): string {
 
 export async function fetchWithCookies(url: string, options: RequestInit) {
   const session = await auth();
+
   // if (session){
-  //   addRoutingTempLogEntry(url);
+  //   addRoutingTempLogEntry(url, "info");
   // }
+
   return fetch(url, {
     ...options,
     headers: {
@@ -56,6 +58,7 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
     );
 
     if (!previewResponse.ok) {
+      // addRoutingTempLogEntry(`${serverAddress}/previews?page=${page}&page_size=${pageSize}`, "error");
       throw new Error(
         `Failed to fetch preview for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
       );
@@ -65,6 +68,7 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
     return previewData; // Return the fetched preview data
   } catch (err) {
     console.error("Error fetching preview data:", err);
+    addRoutingTempLogEntry(`Attempt at fetching paged previews failed`, "error");
     throw err;
   }
 };
@@ -85,6 +89,7 @@ export const fetchFacePreviewsPaged = async (
     );
 
     if (!previewResponse.ok) {
+      // addRoutingTempLogEntry(`${serverAddress}/preview/${photoId} returned error`, "error");
       throw new Error(
         `Failed to fetch face ${face_id} previews for page ${page}: ${previewResponse.status} ${previewResponse.statusText}`,
       );
@@ -176,6 +181,7 @@ export const fetchMediaById = async (mediaId: string) => {
     const media = await response.json();
     return media;
   } catch (err) {
+    addRoutingTempLogEntry(`Attempt at fetching preview by ID failed`, "error");
     console.error("Error fetching preview data:", err);
     throw err;
   }
@@ -201,6 +207,7 @@ export async function uploadFileAPI(fileFormData: FormData) {
     });
     return { ok: response.ok, status: response.status };
   } catch (error) {
+    addRoutingTempLogEntry(`Attempt at uploading an image failed`, "error");
     console.error("Error uploading file:", error);
     throw error;
   }
@@ -219,14 +226,15 @@ export const fetchLogs = async (page: number, pageSize: number) => {
     );
 
     if (!response.ok) {
+      addRoutingTempLogEntry(`${serverAddress}/logs?page=${page}&page_size=${pageSize} returned error`, "error");
       throw new Error(`Failed to fetch logs; page: ${page}`);
     }
 
     // Parse and return JSON directly
     const logs = await response.json();
-    console.log("Logs fetched:", logs); // Check the logs array content
     return logs;
   } catch (err) {
+    addRoutingTempLogEntry(`Attempt at fetching logs failed`, "error");
     console.error("Error fetching logs:", err);
     throw err;
   }
@@ -252,14 +260,14 @@ export async function fetchPeople() {
   }
 }
 
-export async function addRoutingTempLogEntry(url: string) {
+export async function addRoutingTempLogEntry(url: string, level_:string) {
   const routeHistoryCookie = cookies().get("routeHistory");
   const routeHistory = routeHistoryCookie
     ? JSON.parse(routeHistoryCookie.value)
     : [];
 
   const newEntry = {
-    level: "info",
+    level: level_,
     message: `Request made to ${url}`,
     date: new Date().toISOString(),
   };

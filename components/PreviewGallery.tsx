@@ -5,7 +5,7 @@ import { PreviewDisplay } from "./PreviewDisplay";
 
 export function PreviewGallery({ fetchFunction }) {
   const [loading, setLoading] = useState(false);
-  const [previews, setPictures] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [error, setError] = useState(false);
 
   const pageSize = 15;
@@ -17,12 +17,12 @@ export function PreviewGallery({ fetchFunction }) {
   const fetchMorePics = async () => {
     try {
       setLoading(true);
-      const previews = await fetchFunction(currentPage, pageSize);
-      if (previews.length < pageSize) {
+      const newPreviews = await fetchFunction(currentPage, pageSize);
+      if (newPreviews.length < pageSize) {
         setHasMore(false);
       }
       setCurrentPage((prev) => prev + 1);
-      setPictures((prev) => [...prev, ...previews]);
+      setPreviews([...previews, ...newPreviews]);
     } catch (error) {
       setError(true);
       console.error(error);

@@ -1,10 +1,17 @@
-export function StyledInput(props) {
+export function StyledInput(props: {
+  id: string;
+  name: string;
+  placeholder: string;
+  defaultValue?: string;
+  type: string;
+  autoComplete: string;
+}) {
   return (
     <input
       id={props.id}
       name={props.name}
       placeholder={props.placeholder}
-      defaultValue={props.defaultValue}
+      defaultValue={props.defaultValue ? props.defaultValue : ""}
       type={props.type}
       autoComplete={props.autoComplete}
       required

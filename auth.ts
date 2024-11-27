@@ -2,13 +2,6 @@ import { login, refreshAccessToken } from "@/lib/network/network";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-class ServerError extends CredentialsSignin {
-  code: "ServerError";
-}
-class InvalidCredentials extends CredentialsSignin {
-  code: "InvalidCredentials";
-}
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
@@ -20,13 +13,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           const response = await login(credentials);
           if (!response.ok) {
-            throw new InvalidCredentials();
+            throw new CredentialsSignin();
           }
           const loginData = await response.json();
           return loginData ?? null;
         } catch (e) {
           console.log("something wrong with server address");
-          throw new ServerError();
+          throw new CredentialsSignin();
         }
       },
     }),
@@ -52,7 +45,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const refreshResponseBody = await refreshResponse.json();
           if (!refreshResponse.ok) {
             console.error("Error refreshing access_token", refreshResponse);
-            // If we fail to refresh the token, return an error so we can handle it on the page
             token.error = "RefreshTokenError";
             return token;
           }
@@ -64,7 +56,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           };
         } catch (error) {
           console.error("Error refreshing access_token", error);
-          // If we fail to refresh the token, return an error so we can handle it on the page
           token.error = "RefreshTokenError";
           return token;
         }
