@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function PreviewDisplay({ preview }) {
+export function PreviewDisplay({
+  preview,
+}: {
+  preview: { preview_url: string; id: string };
+}) {
   const [error, setError] = useState(false);
   const router = useRouter();
   return (
