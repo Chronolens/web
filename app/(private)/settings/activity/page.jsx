@@ -11,20 +11,20 @@ export default function ActivityPage() {
   const [routeHistory, setRouteHistory] = useState([]);
   const [displayType, setDisplayType] = useState("serverLogs");
 
-  const pageSize = 3;
+  const pageSize = 30;
   const indexRef = useRef(1);
   const loaderRef = useRef(null);
 
   const getLevelColor = (level) => {
     switch (level.toLowerCase()) {
       case "error":
-        return "text-red-500";
+        return "text-red-light";
       case "warning":
-        return "text-yellow-500";
+        return "text-yellow-light";
       case "info":
-        return "text-green-500";
+        return "text-green-light";
       default:
-        return "text-gray-500";
+        return "text-gray-info";
     }
   };
 
@@ -69,7 +69,7 @@ export default function ActivityPage() {
           fetchMoreData();
         }
       },
-      { threshold: 0.8 },
+      { threshold: 1 },
     );
 
     if (loaderRef.current) {
@@ -85,84 +85,78 @@ export default function ActivityPage() {
   }, [displayType, hasMore, loading]);
 
   return (
-    <div className="h-full w-full flex-col">
-      <div className="flex-col space-x-4 p-4">
+    <div className="h-full w-full flex flex-col">
+      <div className="flex flex-row space-x-4 p-4">
         <button
           onClick={() => setDisplayType("serverLogs")}
-          className={`px-4 py-2 font-bold ${
-            displayType === "serverLogs"
-              ? "text-blue-600 border-b-2 border-blue-600"
-              : "text-gray-500"
-          }`}
+          className={`px-4 py-2 font-bold ${displayType === "serverLogs"
+            ? "text-blue-light border-b-2 border-blue-light"
+            : "text-gray-info"
+            }`}
         >
           Server Logs
         </button>
         <button
           onClick={() => setDisplayType("sessionLogs")}
-          className={`px-4 py-2 font-bold ${
-            displayType === "sessionLogs"
-              ? "text-blue-600 border-b-2 border-blue-600"
-              : "text-gray-500"
-          }`}
+          className={`px-4 py-2 font-bold ${displayType === "sessionLogs"
+            ? "text-blue-light border-b-2 border-blue-light"
+            : "text-gray-info"
+            }`}
         >
           Session Logs
         </button>
       </div>
 
-      <div className="flex-col overflow-y-auto p-4">
+      <div className="h-full overflow-auto p-3">
         {displayType === "sessionLogs" && (
-          <div className="max-h-full overflow-y-auto space-y-2">
-            <ul className="space-y-2">
-              {routeHistory.length > 0 ? (
-                routeHistory.map((entry, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center space-x-2 ml-4 mb-2"
-                  >
-                    <span className={`${getLevelColor(entry.level)} font-bold`}>
-                      [{entry.level}]
-                    </span>
-                    <span className="text-gray-700">{entry.message}</span>
-                    <span className="text-gray-500">
-                      - {formatDate(entry.date)}
-                    </span>
-                  </li>
-                ))
-              ) : (
-                <p className="text-gray-500">No route history available.</p>
-              )}
-            </ul>
-          </div>
+          <ul className="space-y-2">
+            {routeHistory.length > 0 ? (
+              routeHistory.map((entry, index) => (
+                <li
+                  key={index}
+                  className="flex items-center space-x-2 ml-4 mb-2"
+                >
+                  <span className={`flex-none w-12 ${getLevelColor(entry.level)} font-bold`}>
+                    [{entry.level}]
+                  </span>
+                  <span className="flex-none text-gray-info w-44">
+                    {formatDate(entry.date)}
+                  </span>
+                  <span className="w-full text-foreground break-words text-wrap overflow-hidden">{entry.message}</span>
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-info">No route history available.</p>
+            )}
+          </ul>
         )}
 
         {displayType === "serverLogs" && (
-          <div className="space-y-2 max-h-full overflow-y-auto">
-            <ul className="space-y-2">
-              {items.slice().map((log) => (
-                <li
-                  key={log.id}
-                  className="flex items-center space-x-2 ml-4 mb-2"
-                >
-                  <span className={`${getLevelColor(log.level)} font-bold`}>
-                    [{log.level}]
-                  </span>
-                  <span className="text-gray-700">{log.message}</span>
-                  <span className="text-gray-500">
-                    - {formatDate(log.date)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="space-y-2">
+            {items.slice().map((log) => (
+              <li
+                key={log.id}
+                className="flex items-center space-x-2 ml-4 mb-2"
+              >
+                <span className={`flex-none w-12 ${getLevelColor(log.level)} font-bold`}>
+                  [{log.level}]
+                </span>
+                <span className="flex-none text-gray-info w-44">
+                  {formatDate(log.date)}
+                </span>
+                <span className="w-full text-foreground break-words text-wrap overflow-hidden">{log.message}</span>
+              </li>
+            ))}
+          </ul>
         )}
 
         {displayType === "serverLogs" && hasMore && (
-          <div ref={loaderRef} className="text-center text-gray-500 py-4">
+          <div ref={loaderRef} className="text-center text-gray-info py-4">
             Loading more logs...
           </div>
         )}
         {!hasMore && displayType === "serverLogs" && (
-          <p className="text-center text-gray-500 py-4">
+          <p className="text-center text-gray-info py-4">
             No more logs to display.
           </p>
         )}

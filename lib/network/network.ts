@@ -68,7 +68,7 @@ export const fetchPreviewsPaged = async (page: number, pageSize: number) => {
     return previewData; // Return the fetched preview data
   } catch (err) {
     console.error("Error fetching preview data:", err);
-    addRoutingTempLogEntry(`Attempt at fetching paged previews failed`, "error");
+    // addRoutingTempLogEntry(`Attempt at fetching paged previews failed`, "error");
     throw err;
   }
 };
@@ -181,7 +181,7 @@ export const fetchMediaById = async (mediaId: string) => {
     const media = await response.json();
     return media;
   } catch (err) {
-    addRoutingTempLogEntry(`Attempt at fetching preview by ID failed`, "error");
+    // addRoutingTempLogEntry(`Attempt at fetching preview by ID failed`, "error");
     console.error("Error fetching preview data:", err);
     throw err;
   }
@@ -207,7 +207,7 @@ export async function uploadFileAPI(fileFormData: FormData) {
     });
     return { ok: response.ok, status: response.status };
   } catch (error) {
-    addRoutingTempLogEntry(`Attempt at uploading an image failed`, "error");
+    // addRoutingTempLogEntry(`Attempt at uploading an image failed`, "error");
     console.error("Error uploading file:", error);
     throw error;
   }
@@ -226,7 +226,7 @@ export const fetchLogs = async (page: number, pageSize: number) => {
     );
 
     if (!response.ok) {
-      addRoutingTempLogEntry(`${serverAddress}/logs?page=${page}&page_size=${pageSize} returned error`, "error");
+      // addRoutingTempLogEntry(`${serverAddress}/logs?page=${page}&page_size=${pageSize} returned error`, "error");
       throw new Error(`Failed to fetch logs; page: ${page}`);
     }
 
@@ -234,7 +234,7 @@ export const fetchLogs = async (page: number, pageSize: number) => {
     const logs = await response.json();
     return logs;
   } catch (err) {
-    addRoutingTempLogEntry(`Attempt at fetching logs failed`, "error");
+    // addRoutingTempLogEntry(`Attempt at fetching logs failed`, "error");
     console.error("Error fetching logs:", err);
     throw err;
   }
